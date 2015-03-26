@@ -100,10 +100,12 @@ public class SomanetServer extends WebSocketServer {
                 new FileInputStream(keyStoreFile),
                 applicationConfiguration.getString("application.ssl.store_password").toCharArray());
 
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        KeyManagerFactory keyManagerFactory =
+                KeyManagerFactory.getInstance(applicationConfiguration.getString("application.ssl.algorithm"));
         keyManagerFactory.init(
                 keyStore, applicationConfiguration.getString("application.ssl.key_password").toCharArray());
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+        TrustManagerFactory trustManagerFactory =
+                TrustManagerFactory.getInstance(applicationConfiguration.getString("application.ssl.algorithm"));
         trustManagerFactory.init(keyStore);
 
         SSLContext sslContext;
