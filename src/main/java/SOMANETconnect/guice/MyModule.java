@@ -11,5 +11,7 @@ public class MyModule extends AbstractModule {
         // Application configuration
         bind(org.apache.commons.configuration.Configuration.class)
                 .toProvider(ApplicationConfigurationProvider.class).asEagerSingleton();
+
+        bind(javax.net.ssl.SSLContext.class).toProvider(SSLContextProvider.class).asEagerSingleton();
     }
 }

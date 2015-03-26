@@ -13,28 +13,18 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URL;
-import java.security.KeyStore;
 
 public class SomanetServer extends WebSocketServer {
 
     private final static Logger logger = Logger.getLogger(SomanetServer.class.getName());
 
-    private Configuration applicationConfiguration;
-
     @Inject
-    public SomanetServer(Configuration applicationConfiguration) throws Exception {
+    public SomanetServer(Configuration applicationConfiguration, SSLContext sslContext) throws Exception {
         super(new InetSocketAddress(applicationConfiguration.getInt("application.ws.port")));
-        this.applicationConfiguration = applicationConfiguration;
-
-        setWebSocketFactory(new DefaultSSLWebSocketServerFactory(createSSLContext()));
+        setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
     }
 
     @Override
@@ -86,31 +76,5 @@ public class SomanetServer extends WebSocketServer {
             // some errors like port binding failed may not be assignable to a specific websocket
             logger.error("An error occurred: " + conn.toString());
         }
-    }
-
-    private SSLContext createSSLContext() throws Exception {
-        KeyStore keyStore = KeyStore.getInstance(applicationConfiguration.getString("application.ssl.store_type"));
-        URL keyStoreUrl = getClass().getClassLoader().getResource(
-                applicationConfiguration.getString("application.ssl.key_store_path"));
-        if (keyStoreUrl == null) {
-            throw new IOException("The key store file couldn't be read");
-        }
-        File keyStoreFile = new File(keyStoreUrl.getPath());
-        keyStore.load(
-                new FileInputStream(keyStoreFile),
-                applicationConfiguration.getString("application.ssl.store_password").toCharArray());
-
-        KeyManagerFactory keyManagerFactory =
-                KeyManagerFactory.getInstance(applicationConfiguration.getString("application.ssl.algorithm"));
-        keyManagerFactory.init(
-                keyStore, applicationConfiguration.getString("application.ssl.key_password").toCharArray());
-        TrustManagerFactory trustManagerFactory =
-                TrustManagerFactory.getInstance(applicationConfiguration.getString("application.ssl.algorithm"));
-        trustManagerFactory.init(keyStore);
-
-        SSLContext sslContext;
-        sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
-        return sslContext;
     }
 }
