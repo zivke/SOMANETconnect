@@ -10,6 +10,24 @@
     <name>SOMANETconnect</name>
     <url>http://maven.apache.org</url>
 
+    <profiles>
+        <profile>
+            <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <env>development</env>
+                <!-- Application -->
+                <application.ws.port>62522</application.ws.port>
+                <application.ssl.store_type>JKS</application.ssl.store_type>
+                <application.ssl.key_store_path>keystore.jks</application.ssl.key_store_path>
+                <application.ssl.store_password>password</application.ssl.store_password>
+                <application.ssl.key_password>password</application.ssl.key_password>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -30,6 +48,12 @@
 
         <!-- Logging -->
         <slf4j.version>1.7.10</slf4j.version>
+
+        <!-- DI -->
+        <guice.version>3.0</guice.version>
+
+        <!-- Apache Commons -->
+        <commons-configuration.version>1.10</commons-configuration.version>
     </properties>
 
     <build>
@@ -47,6 +71,14 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <!-- Instructing the resources plugin to filter certain directories. -->
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
     <dependencies>
@@ -76,6 +108,20 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- DI -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+
+        <!-- Apache Commons -->
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${commons-configuration.version}</version>
         </dependency>
     </dependencies>
 </project>

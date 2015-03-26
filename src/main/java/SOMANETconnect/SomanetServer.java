@@ -1,10 +1,12 @@
 package SOMANETconnect;
 
 import SOMANETconnect.command.ListCommand;
+import com.google.inject.Inject;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -22,16 +24,16 @@ import java.net.URL;
 import java.security.KeyStore;
 
 public class SomanetServer extends WebSocketServer {
-    // load up the key store
-    private final static String STORE_TYPE = "JKS";
-    private final static String KEY_STORE_PATH = "keystore.jks";
-    private final static String STORE_PASSWORD = "password";
-    private final static String KEY_PASSWORD = "password";
 
     private final static Logger logger = Logger.getLogger(SomanetServer.class.getName());
 
-    public SomanetServer(int port) throws Exception {
-        super(new InetSocketAddress(port));
+    private Configuration applicationConfiguration;
+
+    @Inject
+    public SomanetServer(Configuration applicationConfiguration) throws Exception {
+        super(new InetSocketAddress(applicationConfiguration.getInt("application.ws.port")));
+        this.applicationConfiguration = applicationConfiguration;
+
         setWebSocketFactory(new DefaultSSLWebSocketServerFactory(createSSLContext()));
     }
 
@@ -87,16 +89,20 @@ public class SomanetServer extends WebSocketServer {
     }
 
     private SSLContext createSSLContext() throws Exception {
-        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
-        URL keyStoreUrl = getClass().getClassLoader().getResource(KEY_STORE_PATH);
+        KeyStore keyStore = KeyStore.getInstance(applicationConfiguration.getString("application.ssl.store_type"));
+        URL keyStoreUrl = getClass().getClassLoader().getResource(
+                applicationConfiguration.getString("application.ssl.key_store_path"));
         if (keyStoreUrl == null) {
             throw new IOException("The key store file couldn't be read");
         }
         File keyStoreFile = new File(keyStoreUrl.getPath());
-        keyStore.load(new FileInputStream(keyStoreFile), STORE_PASSWORD.toCharArray());
+        keyStore.load(
+                new FileInputStream(keyStoreFile),
+                applicationConfiguration.getString("application.ssl.store_password").toCharArray());
 
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+        keyManagerFactory.init(
+                keyStore, applicationConfiguration.getString("application.ssl.key_password").toCharArray());
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
         trustManagerFactory.init(keyStore);
 
