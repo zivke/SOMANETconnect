@@ -8,7 +8,6 @@
     <packaging>jar</packaging>
 
     <name>SOMANETconnect</name>
-    <url>http://maven.apache.org</url>
 
     <profiles>
         <profile>
