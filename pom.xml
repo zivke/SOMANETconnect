@@ -75,8 +75,19 @@
         <!-- Instructing the resources plugin to filter certain directories. -->
         <resources>
             <resource>
-                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.jks</exclude>
+                </excludes>
+            </resource>
+            <!-- Prevent Maven from filtering out the keystore -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.jks</include>
+                </includes>
             </resource>
         </resources>
     </build>
