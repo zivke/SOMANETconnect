@@ -52,9 +52,9 @@ public class SystemProcessLive implements Runnable {
 
     private String command;
     private String requestId;
-    private Map<String, WebSocket> activeRequestRegister;
+    private Map<String, ActiveRequest> activeRequestRegister;
 
-    public SystemProcessLive(String command, Map<String, WebSocket> activeRequestRegister, String requestId)
+    public SystemProcessLive(String command, Map<String, ActiveRequest> activeRequestRegister, String requestId)
             throws IOException {
         this.command = command;
         this.requestId = requestId;
@@ -63,10 +63,12 @@ public class SystemProcessLive implements Runnable {
 
     @Override
     public void run() {
+        ActiveRequest thisRequest = activeRequestRegister.get(requestId);
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true);
         Process process;
         try {
             process = processBuilder.start();
+            thisRequest.setProcess(process);
         } catch (IOException e) {
             logger.error("An I/O error occurred during process executing (Command: " + command + "; Request ID: "
                     + requestId + ")");
@@ -74,7 +76,7 @@ public class SystemProcessLive implements Runnable {
             return;
         }
 
-        WebSocket webSocketConnection = activeRequestRegister.get(requestId);
+        WebSocket webSocketConnection = thisRequest.getWebSocketConnection();
 
         StreamReader outputReader = new StreamReader(process.getInputStream(), requestId, webSocketConnection);
         outputReader.start();

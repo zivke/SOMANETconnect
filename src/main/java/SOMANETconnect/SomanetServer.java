@@ -23,7 +23,7 @@ public class SomanetServer extends WebSocketServer {
 
     private final static Logger logger = Logger.getLogger(SomanetServer.class.getName());
 
-    private Map<String, WebSocket> activeRequestRegister;
+    private Map<String, ActiveRequest> activeRequestRegister;
 
     @Inject
     public SomanetServer(Configuration applicationConfiguration, SSLContext sslContext) throws Exception {
@@ -56,17 +56,25 @@ public class SomanetServer extends WebSocketServer {
             return;
         }
 
+        String requestId = String.valueOf(request.getID());
+
         try {
             switch (request.getMethod()) {
                 case Constants.LIST:
                     ListCommand listCommand = new ListCommand();
-                    response = new JSONRPC2Response(listCommand.getDeviceList(), request.getID());
+                    response = new JSONRPC2Response(listCommand.getDeviceList(), requestId);
                     webSocketConnection.send(response.toString());
                     break;
                 case Constants.FLASH:
-                    String requestId = (String) request.getID();
-                    activeRequestRegister.put(requestId, webSocketConnection);
+                    activeRequestRegister.put(requestId, new ActiveRequest(webSocketConnection));
                     (new Thread(new SystemProcessLive("./testLive.sh", activeRequestRegister, requestId))).start();
+                    break;
+                case Constants.INTERRUPT:
+                    String requestIdToInterrupt = String.valueOf(request.getNamedParams().get(Constants.ID));
+                    ActiveRequest activeRequest = activeRequestRegister.get(requestIdToInterrupt);
+                    if (activeRequest != null && activeRequest.getProcess() != null) {
+                        activeRequest.getProcess().destroy();
+                    }
                     break;
                 default:
                     response = new JSONRPC2Response(JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
