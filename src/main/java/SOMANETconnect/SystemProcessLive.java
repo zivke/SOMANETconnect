@@ -33,8 +33,7 @@ public class SystemProcessLive implements Runnable {
 
         public void run() {
             try {
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
                 String line;
                 JSONRPC2Response response;
                 while ((line = br.readLine()) != null) {
