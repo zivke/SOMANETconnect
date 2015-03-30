@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,9 +36,7 @@ public class SystemProcessLive implements Runnable {
                 String line;
                 JSONRPC2Response response;
                 while ((line = br.readLine()) != null) {
-                    Map<String, String> outputLine = new HashMap<>();
-                    outputLine.put(Constants.EXEC_LIVE, line);
-                    response = new JSONRPC2Response(outputLine, requestId);
+                    response = new JSONRPC2Response(line, requestId);
                     webSocketConnection.send(response.toString());
                 }
             } catch (IOException ioe) {
