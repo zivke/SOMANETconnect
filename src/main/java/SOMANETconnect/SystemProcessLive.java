@@ -60,19 +60,22 @@ public class SystemProcessLive implements Runnable {
     @Override
     public void run() {
         ActiveRequest thisRequest = activeRequestRegister.get(requestId);
+        WebSocket webSocketConnection = thisRequest.getWebSocketConnection();
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true);
         Process process;
         try {
             process = processBuilder.start();
             thisRequest.setProcess(process);
         } catch (IOException e) {
-            logger.error("An I/O error occurred during process executing (Command: " + command + "; Request ID: "
-                    + requestId + ")");
+            logger.error(e.getMessage() + " (Command: " + command + "; Request ID: " + requestId + ")");
+            JSONRPC2Response response = new JSONRPC2Response(e.getMessage(), requestId);
+            webSocketConnection.send(response.toString());
+            response = new JSONRPC2Response(Constants.EXEC_DONE, requestId);
+            webSocketConnection.send(response.toString());
             activeRequestRegister.remove(requestId);
             return;
         }
 
-        WebSocket webSocketConnection = thisRequest.getWebSocketConnection();
 
         StreamReader outputReader = new StreamReader(process.getInputStream(), requestId, webSocketConnection);
         outputReader.start();
