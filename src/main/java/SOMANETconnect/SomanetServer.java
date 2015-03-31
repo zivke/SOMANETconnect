@@ -12,10 +12,13 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
+import org.java_websocket.util.Base64;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +31,7 @@ public class SomanetServer extends WebSocketServer {
     @Inject
     public SomanetServer(Configuration applicationConfiguration, SSLContext sslContext) throws Exception {
         super(new InetSocketAddress(applicationConfiguration.getInt("application.ws.port")));
-        setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+//        setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
 
         this.activeRequestRegister = new HashMap<>();
     }
@@ -67,7 +70,17 @@ public class SomanetServer extends WebSocketServer {
                     break;
                 case Constants.FLASH:
                     activeRequestRegister.put(requestId, new ActiveRequest(webSocketConnection));
-                    (new Thread(new SystemProcessLive("./testLive.sh", activeRequestRegister, requestId))).start();
+                    String deviceId = String.valueOf(request.getNamedParams().get("id"));
+                    Path flashFilePath = Files.createTempFile("oblac_", null);
+                    byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
+                    Files.write(flashFilePath, data);
+                    (new Thread(
+                            new SystemProcessLive(
+                                    "./xflash --id " + deviceId + " " + flashFilePath.toString(),
+                                    activeRequestRegister,
+                                    requestId
+                            )
+                    )).start();
                     break;
                 case Constants.INTERRUPT:
                     String requestIdToInterrupt = String.valueOf(request.getNamedParams().get(Constants.ID));
