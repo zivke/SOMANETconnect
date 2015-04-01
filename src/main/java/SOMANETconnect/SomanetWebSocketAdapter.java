@@ -95,7 +95,7 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
     }
 
     private Path saveFileFromRequest(JSONRPC2Request request) throws IOException {
-        Path filePath = Files.createTempFile("oblac_", null);
+        Path filePath = Files.createTempFile("SOMANETconnect_", null);
         byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
         Files.write(filePath, data);
         return filePath;
