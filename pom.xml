@@ -19,11 +19,9 @@
                 <env>development</env>
                 <!-- Application -->
                 <application.ws.port>62522</application.ws.port>
-                <application.ssl.store_type>JKS</application.ssl.store_type>
                 <application.ssl.key_store_path>keystore.jks</application.ssl.key_store_path>
                 <application.ssl.store_password>password</application.ssl.store_password>
                 <application.ssl.key_password>password</application.ssl.key_password>
-                <application.ssl.algorithm>SunX509</application.ssl.algorithm>
             </properties>
         </profile>
     </profiles>
