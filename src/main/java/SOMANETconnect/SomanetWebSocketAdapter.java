@@ -27,6 +27,7 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketConnect(Session session) {
         super.onWebSocketConnect(session);
         getSession().getPolicy().setMaxTextMessageSize(1024 * 1024);
+        getSession().setIdleTimeout(-1);
         logger.info("Socket connected to " + session.getRemoteAddress());
     }
 
