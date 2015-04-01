@@ -18,8 +18,8 @@
             <properties>
                 <env>development</env>
                 <!-- Application -->
-                <application.ws.port>62522</application.ws.port>
-                <application.ws.ssl.port>62523</application.ws.ssl.port>
+                <application.ws.port>62521</application.ws.port>
+                <application.ws.ssl.port>62522</application.ws.ssl.port>
                 <application.ws.ssl.key_store_path>/keystore.jks</application.ws.ssl.key_store_path>
                 <application.ws.ssl.key_store_password>password</application.ws.ssl.key_store_password>
                 <application.ws.ssl.key_manager_password>password</application.ws.ssl.key_manager_password>
