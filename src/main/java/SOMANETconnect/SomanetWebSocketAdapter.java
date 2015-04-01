@@ -34,6 +34,7 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
     @Override
     public void onWebSocketText(String message) {
         super.onWebSocketText(message);
+
         // Parse request string
         JSONRPC2Request request;
         JSONRPC2Response response;
@@ -45,26 +46,14 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
             return;
         }
 
-        String requestId = String.valueOf(request.getID());
-
         try {
             switch (request.getMethod()) {
                 case Constants.LIST:
                     ListCommand listCommand = new ListCommand();
-                    response = new JSONRPC2Response(listCommand.getDeviceList(), requestId);
-                    getRemote().sendString(response.toString());
+                    sendWebSocketResponse(listCommand.getDeviceList(), request.getID());
                     break;
                 case Constants.FLASH:
-                    String deviceId = String.valueOf(request.getNamedParams().get("id"));
-                    Path flashFilePath = Files.createTempFile("oblac_", null);
-                    byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
-                    Files.write(flashFilePath, data);
-                    List<String> command = new ArrayList<>();
-                    command.add("./xflash");
-                    command.add("--id");
-                    command.add(deviceId);
-                    command.add(flashFilePath.toString());
-                    (new Thread(new SystemProcessLive(command, activeRequestRegister, requestId, getRemote()))).start();
+                    flash(request);
                     break;
                 case Constants.INTERRUPT:
                     String requestIdToInterrupt = String.valueOf(request.getNamedParams().get(Constants.ID));
@@ -74,16 +63,10 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
                     }
                     break;
                 default:
-                    response = new JSONRPC2Response(JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
-                    getRemote().sendString(response.toString());
+                    sendWebSocketResponse(JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
             }
         } catch (IOException e) {
-            response = new JSONRPC2Response(JSONRPC2Error.INTERNAL_ERROR, request.getID());
-            try {
-                getRemote().sendString(response.toString());
-            } catch (IOException e1) {
-                logger.error(e1.getMessage());
-            }
+            sendWebSocketResponse(JSONRPC2Error.INTERNAL_ERROR, request.getID());
         }
     }
 
@@ -97,5 +80,28 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketError(Throwable cause) {
         super.onWebSocketError(cause);
         logger.error(cause);
+    }
+
+    private void sendWebSocketResponse(Object value, Object requestId) {
+        try {
+            JSONRPC2Response response = new JSONRPC2Response(value, requestId);
+            getRemote().sendString(response.toString());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void flash(JSONRPC2Request request) throws IOException {
+        String requestId = String.valueOf(request.getID());
+        String deviceId = String.valueOf(request.getNamedParams().get("id"));
+        Path flashFilePath = Files.createTempFile("oblac_", null);
+        byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
+        Files.write(flashFilePath, data);
+        List<String> command = new ArrayList<>();
+        command.add("./xflash");
+        command.add("--id");
+        command.add(deviceId);
+        command.add(flashFilePath.toString());
+        (new Thread(new SystemProcessLive(command, activeRequestRegister, requestId, getRemote()))).start();
     }
 }
