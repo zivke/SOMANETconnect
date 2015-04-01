@@ -55,6 +55,9 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
                 case Constants.FLASH:
                     flash(request);
                     break;
+                case Constants.RUN:
+                    run(request);
+                    break;
                 case Constants.INTERRUPT:
                     String requestIdToInterrupt = String.valueOf(request.getNamedParams().get(Constants.ID));
                     Process process = activeRequestRegister.get(requestIdToInterrupt);
@@ -102,6 +105,21 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
         command.add("--id");
         command.add(deviceId);
         command.add(flashFilePath.toString());
+        (new Thread(new SystemProcessLive(command, activeRequestRegister, requestId, getRemote()))).start();
+    }
+
+    private void run(JSONRPC2Request request) throws IOException {
+        String requestId = String.valueOf(request.getID());
+        String deviceId = String.valueOf(request.getNamedParams().get("id"));
+        Path runFilePath = Files.createTempFile("oblac_", null);
+        byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
+        Files.write(runFilePath, data);
+        List<String> command = new ArrayList<>();
+        command.add("./xrun");
+        command.add("--io");
+        command.add("--id");
+        command.add(deviceId);
+        command.add(runFilePath.toString());
         (new Thread(new SystemProcessLive(command, activeRequestRegister, requestId, getRemote()))).start();
     }
 }
