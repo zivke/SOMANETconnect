@@ -38,7 +38,6 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
 
         // Parse request string
         JSONRPC2Request request;
-        JSONRPC2Response response;
 
         try {
             request = JSONRPC2Request.parse(message);
@@ -95,12 +94,17 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
         }
     }
 
+    private Path saveFileFromRequest(JSONRPC2Request request) throws IOException {
+        Path filePath = Files.createTempFile("oblac_", null);
+        byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
+        Files.write(filePath, data);
+        return filePath;
+    }
+
     private void flash(JSONRPC2Request request) throws IOException {
         String requestId = String.valueOf(request.getID());
         String deviceId = String.valueOf(request.getNamedParams().get("id"));
-        Path flashFilePath = Files.createTempFile("oblac_", null);
-        byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
-        Files.write(flashFilePath, data);
+        Path flashFilePath = saveFileFromRequest(request);
         List<String> command = new ArrayList<>();
         command.add("./xflash");
         command.add("--id");
@@ -112,9 +116,7 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
     private void run(JSONRPC2Request request) throws IOException {
         String requestId = String.valueOf(request.getID());
         String deviceId = String.valueOf(request.getNamedParams().get("id"));
-        Path runFilePath = Files.createTempFile("oblac_", null);
-        byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
-        Files.write(runFilePath, data);
+        Path runFilePath = saveFileFromRequest(request);
         List<String> command = new ArrayList<>();
         command.add("./xrun");
         command.add("--io");
