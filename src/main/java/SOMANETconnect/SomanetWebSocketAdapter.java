@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SomanetWebSocketAdapter extends WebSocketAdapter {
+    private static final int MB = 1024 * 1024;
     private final static Logger logger = Logger.getLogger(SomanetWebSocketAdapter.class.getName());
 
     private Map<String, Process> activeRequestRegister = new HashMap<>();
@@ -26,7 +27,7 @@ public class SomanetWebSocketAdapter extends WebSocketAdapter {
     @Override
     public void onWebSocketConnect(Session session) {
         super.onWebSocketConnect(session);
-        getSession().getPolicy().setMaxTextMessageSize(1024 * 1024);
+        getSession().getPolicy().setMaxTextMessageSize(10 * MB);
         getSession().setIdleTimeout(-1);
         logger.info("Socket connected to " + session.getRemoteAddress());
     }
