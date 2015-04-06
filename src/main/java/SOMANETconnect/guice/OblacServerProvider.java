@@ -1,6 +1,6 @@
 package SOMANETconnect.guice;
 
-import SOMANETconnect.SomanetWebSocketAdapter;
+import SOMANETconnect.OblacWebSocketAdapter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.apache.commons.configuration.Configuration;
@@ -10,7 +10,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-public class ServerProvider implements Provider<Server> {
+public class OblacServerProvider implements Provider<Server> {
     @Inject
     private Configuration applicationConfiguration;
 
@@ -29,7 +29,7 @@ public class ServerProvider implements Provider<Server> {
 
         SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStorePath(
-                SomanetWebSocketAdapter.class.getResource(
+                OblacWebSocketAdapter.class.getResource(
                         applicationConfiguration.getString("application.ws.ssl.key_store_path")).getPath());
         sslContextFactory.setKeyStorePassword(applicationConfiguration.getString("application.ws.ssl.key_store_password"));
         sslContextFactory.setKeyManagerPassword(applicationConfiguration.getString("application.ws.ssl.key_manager_password"));
@@ -47,7 +47,7 @@ public class ServerProvider implements Provider<Server> {
         context.setHandler(new WebSocketHandler() {
             @Override
             public void configure(WebSocketServletFactory webSocketServletFactory) {
-                webSocketServletFactory.register(SomanetWebSocketAdapter.class);
+                webSocketServletFactory.register(OblacWebSocketAdapter.class);
             }
         });
         server.setHandler(context);

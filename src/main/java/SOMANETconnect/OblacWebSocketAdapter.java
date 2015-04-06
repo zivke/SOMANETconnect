@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SomanetWebSocketAdapter extends WebSocketAdapter {
+public class OblacWebSocketAdapter extends WebSocketAdapter {
     private static final int MB = 1024 * 1024;
-    private final static Logger logger = Logger.getLogger(SomanetWebSocketAdapter.class.getName());
+    private final static Logger logger = Logger.getLogger(OblacWebSocketAdapter.class.getName());
 
     private Map<String, Process> activeRequestRegister = new HashMap<>();
 

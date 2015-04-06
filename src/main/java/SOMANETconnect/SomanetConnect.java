@@ -12,11 +12,11 @@ public class SomanetConnect {
 
     public static void main(String[] args) throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
-        Server server = injector.getInstance(Server.class);
+        Server oblacServer = injector.getInstance(Key.get(Server.class, Names.named("OBLAC")));
 
         try {
-            server.start();
-            server.join();
+            oblacServer.start();
+            oblacServer.join();
         } catch (Throwable t) {
             logger.error(t.getMessage());
         }
