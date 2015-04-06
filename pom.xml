@@ -20,9 +20,12 @@
                 <!-- Application -->
                 <application.ws.port>62521</application.ws.port>
                 <application.ws.ssl.port>62522</application.ws.ssl.port>
+                <application.ws.motor_tuning.port>62523</application.ws.motor_tuning.port>
                 <application.ws.ssl.key_store_path>/keystore.jks</application.ws.ssl.key_store_path>
                 <application.ws.ssl.key_store_password>password</application.ws.ssl.key_store_password>
                 <application.ws.ssl.key_manager_password>password</application.ws.ssl.key_manager_password>
+                <application.xscope.address>127.0.0.1</application.xscope.address>
+                <application.xscope.port>10101</application.xscope.port>
             </properties>
         </profile>
     </profiles>

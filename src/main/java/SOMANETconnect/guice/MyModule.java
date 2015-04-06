@@ -13,5 +13,9 @@ public class MyModule extends AbstractModule {
         // Jetty OBLAC server
         bind(org.eclipse.jetty.server.Server.class).annotatedWith(Names.named("OBLAC"))
                 .toProvider(OblacServerProvider.class).asEagerSingleton();
+
+        // Jetty motor tuning server
+        bind(org.eclipse.jetty.server.Server.class).annotatedWith(Names.named("MotorTuning"))
+                .toProvider(MotorTuningServerProvider.class).asEagerSingleton();
     }
 }
