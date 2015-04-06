@@ -4,7 +4,6 @@ import SOMANETconnect.command.ListCommand;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
@@ -54,7 +53,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     break;
                 case Constants.LIST:
                     ListCommand listCommand = new ListCommand();
-                    sendWebSocketResponse(listCommand.getDeviceList(), request.getID());
+                    Util.sendWebSocketResultResponse(getRemote(), listCommand.getDeviceList(), request.getID());
                     break;
                 case Constants.SEND:
                     // TODO
@@ -69,11 +68,11 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     // TODO
                     break;
                 default:
-                    sendWebSocketResponse(JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
+                    Util.sendWebSocketErrorResponse(getRemote(), JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
-            sendWebSocketResponse(JSONRPC2Error.INTERNAL_ERROR, request.getID());
+            Util.sendWebSocketErrorResponse(getRemote(), JSONRPC2Error.INTERNAL_ERROR, request.getID());
         }
     }
 
@@ -87,14 +86,5 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketError(Throwable cause) {
         super.onWebSocketError(cause);
         logger.error(cause);
-    }
-
-    private void sendWebSocketResponse(Object value, Object requestId) {
-        try {
-            JSONRPC2Response response = new JSONRPC2Response(value, requestId);
-            getRemote().sendString(response.toString());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 }

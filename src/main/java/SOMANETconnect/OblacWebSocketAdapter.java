@@ -4,7 +4,6 @@ import SOMANETconnect.command.ListCommand;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
@@ -50,7 +49,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
             switch (request.getMethod()) {
                 case Constants.LIST:
                     ListCommand listCommand = new ListCommand();
-                    sendWebSocketResponse(listCommand.getDeviceList(), request.getID());
+                    Util.sendWebSocketResultResponse(getRemote(), listCommand.getDeviceList(), request.getID());
                     break;
                 case Constants.FLASH:
                     flash(request);
@@ -66,10 +65,10 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
                     }
                     break;
                 default:
-                    sendWebSocketResponse(JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
+                    Util.sendWebSocketErrorResponse(getRemote(), JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
             }
         } catch (IOException e) {
-            sendWebSocketResponse(JSONRPC2Error.INTERNAL_ERROR, request.getID());
+            Util.sendWebSocketErrorResponse(getRemote(), JSONRPC2Error.INTERNAL_ERROR, request.getID());
         }
     }
 
@@ -83,15 +82,6 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketError(Throwable cause) {
         super.onWebSocketError(cause);
         logger.error(cause);
-    }
-
-    private void sendWebSocketResponse(Object value, Object requestId) {
-        try {
-            JSONRPC2Response response = new JSONRPC2Response(value, requestId);
-            getRemote().sendString(response.toString());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 
     private Path saveFileFromRequest(JSONRPC2Request request) throws IOException {
