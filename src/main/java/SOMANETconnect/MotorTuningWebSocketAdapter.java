@@ -9,6 +9,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
     private static final int MB = 1024 * 1024;
@@ -21,6 +23,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
         super.onWebSocketConnect(session);
         getSession().getPolicy().setMaxTextMessageSize(10 * MB);
         getSession().setIdleTimeout(-1);
+        this.xscopeSocket = new XscopeSocket("127.0.0.1", "10101");
         logger.info("Socket connected to " + session.getRemoteAddress());
     }
 
@@ -41,9 +44,6 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
         try {
             switch (request.getMethod()) {
                 case Constants.START_XSCOPE:
-                    if (xscopeSocket == null) {
-                        xscopeSocket = new XscopeSocket("127.0.0.1", "10101");
-                    }
                     if (!xscopeSocket.getListen()) {
                         (new Thread(xscopeSocket)).start();
                     }
@@ -59,10 +59,16 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     // TODO
                     break;
                 case Constants.START_MOTOR:
-                    // TODO
+                    if (!xscopeSocket.getListen()) {
+                        (new Thread(xscopeSocket)).start();
+                        startExampleApp();
+                    }
                     break;
                 case Constants.STOP_MOTOR:
-                    // TODO
+                    if (xscopeSocket.getListen()) {
+                        xscopeSocket.close();
+                        stopExampleApp();
+                    }
                     break;
                 case Constants.ERASE_FIRMWARE:
                     // TODO
@@ -86,5 +92,21 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketError(Throwable cause) {
         super.onWebSocketError(cause);
         logger.error(cause);
+    }
+
+    private void startExampleApp() throws IOException {
+        List<String> command = new ArrayList<>();
+        command.add("./example_app_control.sh");
+        command.add("-s");
+        ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
+        processBuilder.start();
+    }
+
+    private void stopExampleApp() throws IOException {
+        List<String> command = new ArrayList<>();
+        command.add("./example_app_control.sh");
+        command.add("-t");
+        ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
+        processBuilder.start();
     }
 }
