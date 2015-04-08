@@ -23,7 +23,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
         super.onWebSocketConnect(session);
         getSession().getPolicy().setMaxTextMessageSize(10 * MB);
         getSession().setIdleTimeout(-1);
-        this.xscopeSocket = new XscopeSocket("127.0.0.1", "10101");
+        this.xscopeSocket = new XscopeSocket("127.0.0.1", "10101", getRemote());
         logger.info("Socket connected to " + session.getRemoteAddress());
     }
 
@@ -45,6 +45,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
             switch (request.getMethod()) {
                 case Constants.START_XSCOPE:
                     if (!xscopeSocket.getListen()) {
+                        xscopeSocket.setRequestId(request.getID());
                         (new Thread(xscopeSocket)).start();
                     }
                     break;
@@ -60,6 +61,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     break;
                 case Constants.START_MOTOR:
                     if (!xscopeSocket.getListen()) {
+                        xscopeSocket.setRequestId(request.getID());
                         (new Thread(xscopeSocket)).start();
                         startExampleApp();
                     }
