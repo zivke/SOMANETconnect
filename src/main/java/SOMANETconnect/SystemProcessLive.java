@@ -1,6 +1,5 @@
 package SOMANETconnect;
 
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
@@ -32,7 +31,7 @@ public class SystemProcessLive implements Runnable {
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
                 String line;
                 while ((line = readLineWithTerm(br)) != null) {
-                    sendWebSocketResponse(line, requestId);
+                    Util.sendWebSocketResultResponse(remoteEndpoint, line, requestId);
                 }
             } catch (IOException e) {
                 logger.error(e.getMessage());
@@ -67,8 +66,8 @@ public class SystemProcessLive implements Runnable {
                 wholeCommand += arg + " ";
             }
             logger.error(e.getMessage() + " (Command: " + wholeCommand + "; Request ID: " + requestId + ")");
-            sendWebSocketResponse(e.getMessage(), requestId);
-            sendWebSocketResponse(Constants.EXEC_DONE, requestId);
+            Util.sendWebSocketResultResponse(remoteEndpoint, e.getMessage(), requestId);
+            Util.sendWebSocketResultResponse(remoteEndpoint, Constants.EXEC_DONE, requestId);
             activeRequestRegister.remove(requestId);
             return;
         }
@@ -83,18 +82,9 @@ public class SystemProcessLive implements Runnable {
             // NO-OP
         }
 
-        sendWebSocketResponse(Constants.EXEC_DONE, requestId);
+        Util.sendWebSocketResultResponse(remoteEndpoint, Constants.EXEC_DONE, requestId);
 
         activeRequestRegister.remove(requestId);
-    }
-
-    private void sendWebSocketResponse(String message, String requestId) {
-        try {
-            JSONRPC2Response response = new JSONRPC2Response(message, requestId);
-            remoteEndpoint.sendString(response.toString());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 
     private static String readLineWithTerm(BufferedReader reader) throws IOException {
