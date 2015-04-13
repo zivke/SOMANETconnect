@@ -62,11 +62,15 @@ public class XscopeSocket implements Runnable {
         return listen;
     }
 
+    public int getMotorParameterProbe() {
+        return motorParameterProbe;
+    }
+
     public void setRequestId(Object requestId) {
         this.requestId = requestId;
     }
 
-    public void hookRegistrationReceived(int sockfd, int xscope_probe, String name) {
+    public void registrationReceived(int sockfd, int xscope_probe, String name) {
         if (Constants.MOTOR_PARAMETERS.equals(name)) {
             motorParameterProbe = xscope_probe;
         } else { // Send the probe registration message to the web client
@@ -76,5 +80,21 @@ public class XscopeSocket implements Runnable {
             result.put(Constants.NAME, name);
             Util.sendWebSocketResultResponse(remoteEndpoint, result, requestId);
         }
+    }
+
+    public void motorParametersReceived(String parameters) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(Constants.TYPE, Constants.MOTOR_PARAMETERS);
+        result.put(Constants.DATA, parameters);
+        Util.sendWebSocketResultResponse(remoteEndpoint, result, requestId);
+    }
+
+    public void dataReceived(int xscope_probe, long data, long timestamp) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(Constants.TYPE, Constants.XSCOPE);
+        result.put(Constants.PROBE, xscope_probe);
+        result.put(Constants.DATA, data);
+        result.put(Constants.TIMESTAMP, timestamp);
+        Util.sendWebSocketResultResponse(remoteEndpoint, result, requestId);
     }
 }
