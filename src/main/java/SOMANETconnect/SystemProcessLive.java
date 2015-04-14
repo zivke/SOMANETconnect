@@ -1,13 +1,13 @@
 package SOMANETconnect;
 
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import org.apache.log4j.Logger;
-import org.java_websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,64 +20,60 @@ public class SystemProcessLive implements Runnable {
 
     class StreamReader extends Thread {
         InputStream is;
-        String requestId;
-        WebSocket webSocketConnection;
 
         // Reads everything from the input stream until it is empty
-        StreamReader(InputStream is, String requestId, WebSocket webSocketConnection) {
+        StreamReader(InputStream is) {
             this.is = is;
-            this.requestId = requestId;
-            this.webSocketConnection = webSocketConnection;
         }
 
         public void run() {
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
                 String line;
-                JSONRPC2Response response;
-                while ((line = br.readLine()) != null) {
-                    response = new JSONRPC2Response(line, requestId);
-                    webSocketConnection.send(response.toString());
+                while ((line = readLineWithTerm(br)) != null) {
+                    Util.sendWebSocketResultResponse(remoteEndpoint, line, requestId);
                 }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+            } catch (IOException e) {
+                logger.error(e.getMessage());
             }
         }
-
     }
 
-    private String command;
+    private List<String> command;
     private String requestId;
-    private Map<String, ActiveRequest> activeRequestRegister;
+    private Map<String, Process> activeRequestRegister;
+    private RemoteEndpoint remoteEndpoint;
 
-    public SystemProcessLive(String command, Map<String, ActiveRequest> activeRequestRegister, String requestId)
+    public SystemProcessLive(
+            List<String> command, Map<String, Process> activeRequestRegister, String requestId, RemoteEndpoint remoteEndpoint)
             throws IOException {
         this.command = command;
         this.requestId = requestId;
         this.activeRequestRegister = activeRequestRegister;
+        this.remoteEndpoint = remoteEndpoint;
     }
 
     @Override
     public void run() {
-        ActiveRequest thisRequest = activeRequestRegister.get(requestId);
-        WebSocket webSocketConnection = thisRequest.getWebSocketConnection();
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true);
         Process process;
         try {
             process = processBuilder.start();
-            thisRequest.setProcess(process);
+            activeRequestRegister.put(requestId, process);
         } catch (IOException e) {
-            logger.error(e.getMessage() + " (Command: " + command + "; Request ID: " + requestId + ")");
-            JSONRPC2Response response = new JSONRPC2Response(e.getMessage(), requestId);
-            webSocketConnection.send(response.toString());
-            response = new JSONRPC2Response(Constants.EXEC_DONE, requestId);
-            webSocketConnection.send(response.toString());
+            String wholeCommand = "";
+            for (String arg : command) {
+                wholeCommand += arg + " ";
+            }
+            logger.error(e.getMessage() + " (Command: " + wholeCommand + "; Request ID: " + requestId + ")");
+            Util.sendWebSocketResultResponse(remoteEndpoint, e.getMessage(), requestId);
+            Util.sendWebSocketResultResponse(remoteEndpoint, Constants.EXEC_DONE, requestId);
             activeRequestRegister.remove(requestId);
             return;
         }
 
 
-        StreamReader outputReader = new StreamReader(process.getInputStream(), requestId, webSocketConnection);
+        StreamReader outputReader = new StreamReader(process.getInputStream());
         outputReader.start();
 
         try {
@@ -86,9 +82,36 @@ public class SystemProcessLive implements Runnable {
             // NO-OP
         }
 
-        JSONRPC2Response response = new JSONRPC2Response(Constants.EXEC_DONE, requestId);
-        webSocketConnection.send(response.toString());
+        Util.sendWebSocketResultResponse(remoteEndpoint, Constants.EXEC_DONE, requestId);
 
         activeRequestRegister.remove(requestId);
+    }
+
+    private static String readLineWithTerm(BufferedReader reader) throws IOException {
+        int code;
+        StringBuilder line = new StringBuilder();
+
+        while ((code = reader.read()) != -1) {
+            char ch = (char) code;
+
+            line.append(ch);
+
+            if (ch == '\n') {
+                break;
+            } else if (ch == '\r') {
+                reader.mark(1);
+                ch = (char) reader.read();
+
+                if (ch == '\n') {
+                    line.append(ch);
+                } else {
+                    reader.reset();
+                }
+
+                break;
+            }
+        }
+
+        return (line.length() == 0 ? null : line.toString());
     }
 }

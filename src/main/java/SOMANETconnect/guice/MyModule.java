@@ -1,17 +1,21 @@
 package SOMANETconnect.guice;
 
-import SOMANETconnect.SomanetServer;
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 
 public class MyModule extends AbstractModule {
     @Override
     protected void configure() {
-        requestInjection(SomanetServer.class);
-
         // Application configuration
         bind(org.apache.commons.configuration.Configuration.class)
                 .toProvider(ApplicationConfigurationProvider.class).asEagerSingleton();
 
-        bind(javax.net.ssl.SSLContext.class).toProvider(SSLContextProvider.class).asEagerSingleton();
+        // Jetty OBLAC server
+        bind(org.eclipse.jetty.server.Server.class).annotatedWith(Names.named("OBLAC"))
+                .toProvider(OblacServerProvider.class).asEagerSingleton();
+
+        // Jetty motor tuning server
+        bind(org.eclipse.jetty.server.Server.class).annotatedWith(Names.named("MotorTuning"))
+                .toProvider(MotorTuningServerProvider.class).asEagerSingleton();
     }
 }
