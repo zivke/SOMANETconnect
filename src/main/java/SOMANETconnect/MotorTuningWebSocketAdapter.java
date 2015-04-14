@@ -14,6 +14,7 @@ import java.util.List;
 
 public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
     private static final int MB = 1024 * 1024;
+    private static final String MOTOR_CONTROL_ATTR = "motor_control";
     private final static Logger logger = Logger.getLogger(MotorTuningWebSocketAdapter.class.getName());
 
     private XscopeSocket xscopeSocket;
@@ -57,7 +58,8 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     Util.sendWebSocketResultResponse(getRemote(), listCommand.getDeviceList(), request.getID());
                     break;
                 case Constants.SEND:
-                    // TODO
+                    String motorControlParams = (String) request.getNamedParams().get(MOTOR_CONTROL_ATTR);
+                    xscopeSocket.sendData(motorControlParams);
                     break;
                 case Constants.START_MOTOR:
                     if (!xscopeSocket.getListen()) {

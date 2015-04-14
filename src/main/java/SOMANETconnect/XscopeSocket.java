@@ -15,6 +15,8 @@ public class XscopeSocket implements Runnable {
 
     public native void releaseSocket(int xScopeSocketFileDescriptor);
 
+    public native void sendData(int xScopeSocketFileDescriptor, String data);
+
     static {
         System.loadLibrary("XscopeSocket");
     }
@@ -96,5 +98,9 @@ public class XscopeSocket implements Runnable {
         result.put(Constants.DATA, data);
         result.put(Constants.TIMESTAMP, timestamp);
         Util.sendWebSocketResultResponse(remoteEndpoint, result, requestId);
+    }
+
+    public void sendData(String data) {
+        sendData(socketFileDescriptors[0], data);
     }
 }
