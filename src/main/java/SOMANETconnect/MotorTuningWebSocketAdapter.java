@@ -15,6 +15,8 @@ import java.util.List;
 public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
     private static final int MB = 1024 * 1024;
     private static final String MOTOR_CONTROL_ATTR = "motor_control";
+    private static final String ID_ATTR = "id";
+    private static final String TYPE_ATTR = "type";
     private final static Logger logger = Logger.getLogger(MotorTuningWebSocketAdapter.class.getName());
 
     private XscopeSocket xscopeSocket;
@@ -75,7 +77,16 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     }
                     break;
                 case Constants.ERASE_FIRMWARE:
-                    // TODO
+                    String deviceId = (String) request.getNamedParams().get(ID_ATTR);
+                    String deviceType = (String) request.getNamedParams().get(TYPE_ATTR);
+                    SystemProcess process =
+                            new SystemProcess("./erase_firmware.sh -i " + deviceId + " -t " + deviceType);
+                    if (process.getResult() == 0) {
+                        Util.sendWebSocketResultResponse(getRemote(), Constants.ERASE_FIRMWARE, request.getID());
+                    } else {
+                        logger.error(process.getError());
+                        Util.sendWebSocketErrorResponse(getRemote(), JSONRPC2Error.INTERNAL_ERROR, request.getID());
+                    }
                     break;
                 default:
                     Util.sendWebSocketErrorResponse(getRemote(), JSONRPC2Error.METHOD_NOT_FOUND, request.getID());
