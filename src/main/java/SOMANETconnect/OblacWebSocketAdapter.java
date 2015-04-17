@@ -62,6 +62,9 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
                     Process process = activeRequestRegister.get(requestIdToInterrupt);
                     if (process != null) {
                         process.destroy();
+                        // Kill any residual processes (that the main process may have started) by the unique name of
+                        // the temporary file used in the original command
+                        new SystemProcess("pkill -f " + requestIdToInterrupt);
                     }
                     break;
                 default:
@@ -85,7 +88,8 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
     }
 
     private Path saveFileFromRequest(JSONRPC2Request request) throws IOException {
-        Path filePath = Files.createTempFile("SOMANETconnect_", null);
+        // Add the request ID to the temporary file so it can later be used to identify and kill any residual processes
+        Path filePath = Files.createTempFile("SOMANETconnect_" + request.getID() + "_", null);
         byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
         Files.write(filePath, data);
         return filePath;
