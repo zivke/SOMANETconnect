@@ -1,5 +1,9 @@
 package SOMANETconnect;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public final class Constants {
     public final static String ERROR = "error";
     public final static String LIST = "list";
@@ -34,4 +38,35 @@ public final class Constants {
     public final static String CONTENT = "content";
     public final static String RESULT = "result";
     public final static String MOTOR_PARAMETERS = "motor_parameters";
+    public final static Map<String, String> environmentVariables;
+
+    static {
+        Map<String, String> tmpMap = new HashMap<>();
+        String currentDir = System.getProperty("user.dir");
+        String homeDir = System.getenv("HOME");
+        String pathEnvVar = System.getenv("PATH");
+        tmpMap.put("XMOS_TOOL_PATH", currentDir);
+        tmpMap.put("installpath", currentDir);
+        String xmosHome = homeDir + "/.xmos";
+        tmpMap.put("XMOS_HOME", xmosHome);
+        tmpMap.put("PATH", currentDir + "/bin:" + pathEnvVar);
+        tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib:" + System.getenv("LD_LIBRARY_PATH"));
+        String xccCIncludePath = currentDir + "/target/include:" + currentDir + "/target/include/gcc";
+        tmpMap.put("XCC_C_INCLUDE_PATH", xccCIncludePath);
+        String xccXcIncludePath = currentDir + "/target/include/xc:" + System.getenv("XCC_C_INCLUDE_PATH");
+        tmpMap.put("XCC_XC_INCLUDE_PATH", xccXcIncludePath);
+        String xccCplusIncludePath = xccXcIncludePath + ":" + currentDir + "/target/include/c++/4.2.1";
+        tmpMap.put("XCC_CPLUS_INCLUDE_PATH", xccCplusIncludePath);
+        tmpMap.put("XCC_CPLUS_INCLUDE_PATH", xccCplusIncludePath + ":" + currentDir + "/target/include/c++/4.2.1/xcore-xmos-elf");
+        tmpMap.put("XCC_ASSEMBLER_INCLUDE_PATH", xccCIncludePath);
+        tmpMap.put("XCC_LIBRARY_PATH", currentDir + "/target/lib");
+        tmpMap.put("XCC_DEVICE_PATH", currentDir + "/configs:" + currentDir + "/configs/.deprecated");
+        tmpMap.put("XCC_TARGET_PATH", xmosHome + "/targets:" + currentDir + "/targets:" + currentDir + "/targets/.deprecated");
+        tmpMap.put("XCC_EXEC_PREFIX", currentDir + "/libexec/");
+        tmpMap.put("PYTHON_HOME", currentDir + "/lib/jython");
+        tmpMap.put("PYTHON_VERBOSE", "warning");
+        tmpMap.put("XMOS_CACHE_PATH", xmosHome + "/cache");
+        tmpMap.put("XMOS_REPO_PATH", xmosHome + "/repos");
+        environmentVariables = Collections.unmodifiableMap(tmpMap);
+    }
 }
