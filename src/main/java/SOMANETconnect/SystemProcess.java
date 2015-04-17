@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Used for synchronous process execution. Once the process has finished, its result code, output and error streams are
@@ -46,9 +48,12 @@ public class SystemProcess {
     private String error;
 
     public SystemProcess(String command) throws IOException {
+        ArrayList<String> commandList = new ArrayList<>(Arrays.asList(command.split(" ")));
+        ProcessBuilder processBuilder = new ProcessBuilder().command(commandList);
+        processBuilder.environment().putAll(Constants.environmentVariables);
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = processBuilder.start();
         } catch (IOException e) {
             logger.error("An I/O error occurred during process executing.");
             throw e;

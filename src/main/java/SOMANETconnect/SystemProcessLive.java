@@ -56,6 +56,7 @@ public class SystemProcessLive implements Runnable {
     @Override
     public void run() {
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true);
+        processBuilder.environment().putAll(Constants.environmentVariables);
         Process process;
         try {
             process = processBuilder.start();
