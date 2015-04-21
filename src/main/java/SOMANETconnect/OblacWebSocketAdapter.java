@@ -4,10 +4,10 @@ import SOMANETconnect.command.ListCommand;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
-import org.java_websocket.util.Base64;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -90,7 +90,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
     private Path saveFileFromRequest(JSONRPC2Request request) throws IOException {
         // Add the request ID to the temporary file so it can later be used to identify and kill any residual processes
         Path filePath = Files.createTempFile("SOMANETconnect_" + request.getID() + "_", null);
-        byte[] data = Base64.decode(String.valueOf(request.getNamedParams().get("content")));
+        byte[] data = Base64.decodeBase64(String.valueOf(request.getNamedParams().get("content")));
         Files.write(filePath, data);
         return filePath;
     }
