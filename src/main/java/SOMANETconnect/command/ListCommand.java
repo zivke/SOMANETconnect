@@ -11,11 +11,18 @@ import java.util.Map;
 
 public class ListCommand extends SystemProcess {
     public ListCommand() throws IOException {
-        super(System.getProperty("user.dir") + "/bin/xflash -l");
+        super(prepareCommand());
 
         if (getResult() != 0) {
             throw new IOException(getError());
         }
+    }
+
+    public static List<String> prepareCommand() {
+        ArrayList<String> command = new ArrayList<>();
+        command.add(System.getProperty("user.dir") + "/bin/xflash");
+        command.add("-l");
+        return command;
     }
 
     public List getDeviceList() {

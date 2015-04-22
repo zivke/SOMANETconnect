@@ -79,8 +79,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                 case Constants.ERASE_FIRMWARE:
                     String deviceId = (String) request.getNamedParams().get(ID_ATTR);
                     String deviceType = (String) request.getNamedParams().get(TYPE_ATTR);
-                    SystemProcess process =
-                            new SystemProcess("./erase_firmware.sh -i " + deviceId + " -t " + deviceType);
+                    SystemProcess process = eraseFirmware(deviceId, deviceType);
                     if (process.getResult() == 0) {
                         Util.sendWebSocketResultResponse(getRemote(), Constants.ERASE_FIRMWARE, request.getID());
                     } else {
@@ -123,5 +122,15 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
         command.add("-t");
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
         processBuilder.start();
+    }
+
+    private SystemProcess eraseFirmware(String deviceId, String deviceType) throws IOException {
+        List<String> command = new ArrayList<>();
+        command.add("./erase_firmware.sh");
+        command.add("-i");
+        command.add(deviceId);
+        command.add("-t");
+        command.add(deviceType);
+        return new SystemProcess(command);
     }
 }

@@ -62,9 +62,13 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
                     Process process = activeRequestRegister.get(requestIdToInterrupt);
                     if (process != null) {
                         process.destroy();
+                        ArrayList<String> command = new ArrayList<>();
+                        command.add("pkill");
+                        command.add("-f");
+                        command.add(requestIdToInterrupt);
                         // Kill any residual processes (that the main process may have started) by the unique name of
                         // the temporary file used in the original command
-                        new SystemProcess("pkill -f " + requestIdToInterrupt);
+                        new SystemProcess(command);
                     }
                     break;
                 default:
