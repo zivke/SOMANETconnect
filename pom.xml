@@ -57,6 +57,7 @@
         <!-- Apache Commons -->
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-codec.version>1.10</commons-codec.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
     </properties>
 
     <build>
@@ -149,6 +150,10 @@
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
     </dependencies>
 </project>
