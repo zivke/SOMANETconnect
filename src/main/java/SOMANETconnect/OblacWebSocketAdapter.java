@@ -100,7 +100,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
         String deviceId = String.valueOf(request.getNamedParams().get("id"));
         Path flashFilePath = saveFileFromRequest(request);
         List<String> command = new ArrayList<>();
-        command.add("bin/xflash");
+        command.add(System.getProperty("user.dir") + "/bin/xflash");
         command.add("--id");
         command.add(deviceId);
         command.add(flashFilePath.toString());
@@ -112,7 +112,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
         String deviceId = String.valueOf(request.getNamedParams().get("id"));
         Path runFilePath = saveFileFromRequest(request);
         List<String> command = new ArrayList<>();
-        command.add("bin/xrun");
+        command.add(System.getProperty("user.dir") + "/bin/xrun");
         command.add("--io");
         command.add("--id");
         command.add(deviceId);

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ListCommand extends SystemProcess {
     public ListCommand() throws IOException {
-        super("bin/xflash -l");
+        super(System.getProperty("user.dir") + "/bin/xflash -l");
 
         if (getResult() != 0) {
             throw new IOException(getError());
