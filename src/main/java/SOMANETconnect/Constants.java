@@ -62,7 +62,7 @@ public final class Constants {
         if (SystemUtils.IS_OS_WINDOWS) {
             tmpMap.put("Path", currentDir + "/bin" + delimiter + currentDir + "/lib" + delimiter + pathEnvVar);
         } else {
-            tmpMap.put("PATH", currentDir + "/bin" + delimiter + currentDir + "/lib" + delimiter + pathEnvVar);
+            tmpMap.put("PATH", currentDir + "/bin" + delimiter + pathEnvVar);
         }
         String ldLibraryPath = getEnv("LD_LIBRARY_PATH");
         tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib" + delimiter + ldLibraryPath);
