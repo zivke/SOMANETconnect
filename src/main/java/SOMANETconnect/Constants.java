@@ -49,34 +49,44 @@ public final class Constants {
         String homeDir;
         if (SystemUtils.IS_OS_WINDOWS) {
             delimiter = ";";
-            homeDir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+            homeDir = getEnv("HOMEDRIVE") + getEnv("HOMEPATH");
         } else {
             delimiter = ":";
-            homeDir = System.getenv("HOME");
+            homeDir = getEnv("HOME");
         }
-        String pathEnvVar = System.getenv("PATH");
+        String pathEnvVar = getEnv("PATH");
         tmpMap.put("XMOS_TOOL_PATH", currentDir);
         tmpMap.put("installpath", currentDir);
         String xmosHome = homeDir + "/.xmos";
         tmpMap.put("XMOS_HOME", xmosHome);
         tmpMap.put("PATH", currentDir + "/bin" + delimiter + pathEnvVar);
-        tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib" + delimiter + System.getenv("LD_LIBRARY_PATH"));
+        String ldLibraryPath = getEnv("LD_LIBRARY_PATH");
+        tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib" + delimiter + ldLibraryPath);
         String xccCIncludePath = currentDir + "/target/include" + delimiter + currentDir + "/target/include/gcc";
         tmpMap.put("XCC_C_INCLUDE_PATH", xccCIncludePath);
-        String xccXcIncludePath = currentDir + "/target/include/xc" + delimiter + System.getenv("XCC_C_INCLUDE_PATH");
+        String xccXcIncludePath = currentDir + "/target/include/xc" + delimiter + xccCIncludePath;
         tmpMap.put("XCC_XC_INCLUDE_PATH", xccXcIncludePath);
-        String xccCplusIncludePath = xccXcIncludePath + delimiter + currentDir + "/target/include/c++/4.2.1";
-        tmpMap.put("XCC_CPLUS_INCLUDE_PATH", xccCplusIncludePath);
-        tmpMap.put("XCC_CPLUS_INCLUDE_PATH", xccCplusIncludePath + delimiter + currentDir + "/target/include/c++/4.2.1/xcore-xmos-elf");
+        String xccCPlusIncludePath = xccXcIncludePath + delimiter + currentDir + "/target/include/c++/4.2.1" + delimiter
+                + currentDir + "/target/include/c++/4.2.1/xcore-xmos-elf";
+        tmpMap.put("XCC_CPLUS_INCLUDE_PATH", xccCPlusIncludePath);
         tmpMap.put("XCC_ASSEMBLER_INCLUDE_PATH", xccCIncludePath);
         tmpMap.put("XCC_LIBRARY_PATH", currentDir + "/target/lib");
         tmpMap.put("XCC_DEVICE_PATH", currentDir + "/configs" + delimiter + currentDir + "/configs/.deprecated");
-        tmpMap.put("XCC_TARGET_PATH", xmosHome + "/targets" + delimiter + currentDir + "/targets" + delimiter + currentDir + "/targets/.deprecated");
+        tmpMap.put("XCC_TARGET_PATH", xmosHome + "/targets" + delimiter + currentDir + "/targets" + delimiter
+                + currentDir + "/targets/.deprecated");
         tmpMap.put("XCC_EXEC_PREFIX", currentDir + "/libexec/");
         tmpMap.put("PYTHON_HOME", currentDir + "/lib/jython");
         tmpMap.put("PYTHON_VERBOSE", "warning");
         tmpMap.put("XMOS_CACHE_PATH", xmosHome + "/cache");
         tmpMap.put("XMOS_REPO_PATH", xmosHome + "/repos");
         environmentVariables = Collections.unmodifiableMap(tmpMap);
+    }
+
+    private static String getEnv(String env) {
+        String value = System.getenv(env);
+        if (value == null) {
+            value = "";
+        }
+        return value;
     }
 }
