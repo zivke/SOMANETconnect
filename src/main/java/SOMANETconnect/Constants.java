@@ -59,7 +59,11 @@ public final class Constants {
         tmpMap.put("installpath", currentDir);
         String xmosHome = homeDir + "/.xmos";
         tmpMap.put("XMOS_HOME", xmosHome);
-        tmpMap.put("PATH", currentDir + "/bin" + delimiter + pathEnvVar);
+        if (SystemUtils.IS_OS_WINDOWS) {
+            tmpMap.put("Path", currentDir + "/bin" + delimiter + pathEnvVar);
+        } else {
+            tmpMap.put("PATH", currentDir + "/bin" + delimiter + pathEnvVar);
+        }
         String ldLibraryPath = getEnv("LD_LIBRARY_PATH");
         tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib" + delimiter + ldLibraryPath);
         String xccCIncludePath = currentDir + "/target/include" + delimiter + currentDir + "/target/include/gcc";
