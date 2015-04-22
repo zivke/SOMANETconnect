@@ -1,5 +1,7 @@
 package SOMANETconnect;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +45,12 @@ public final class Constants {
     static {
         Map<String, String> tmpMap = new HashMap<>();
         String currentDir = System.getProperty("user.dir");
-        String homeDir = System.getenv("HOME");
+        String homeDir;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            homeDir = System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH");
+        } else {
+            homeDir = System.getenv("HOME");
+        }
         String pathEnvVar = System.getenv("PATH");
         tmpMap.put("XMOS_TOOL_PATH", currentDir);
         tmpMap.put("installpath", currentDir);
