@@ -60,9 +60,9 @@ public final class Constants {
         String xmosHome = homeDir + "/.xmos";
         tmpMap.put("XMOS_HOME", xmosHome);
         if (SystemUtils.IS_OS_WINDOWS) {
-            tmpMap.put("Path", currentDir + "/bin" + delimiter + pathEnvVar);
+            tmpMap.put("Path", currentDir + "/bin" + delimiter + currentDir + "/lib" + delimiter + pathEnvVar);
         } else {
-            tmpMap.put("PATH", currentDir + "/bin" + delimiter + pathEnvVar);
+            tmpMap.put("PATH", currentDir + "/bin" + delimiter + currentDir + "/lib" + delimiter + pathEnvVar);
         }
         String ldLibraryPath = getEnv("LD_LIBRARY_PATH");
         tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib" + delimiter + ldLibraryPath);
