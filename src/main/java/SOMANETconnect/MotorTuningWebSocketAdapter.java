@@ -4,6 +4,7 @@ import SOMANETconnect.command.ListCommand;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
@@ -126,7 +127,11 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
 
     private SystemProcess eraseFirmware(String deviceId, String deviceType) throws IOException {
         List<String> command = new ArrayList<>();
-        command.add("./erase_firmware.sh");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command.add("erase_firmware.bat");
+        } else {
+            command.add("./erase_firmware.sh");
+        }
         command.add("-i");
         command.add(deviceId);
         command.add("-t");
