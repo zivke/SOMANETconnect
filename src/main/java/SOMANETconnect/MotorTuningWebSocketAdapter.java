@@ -111,7 +111,11 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
 
     private void startExampleApp() throws IOException {
         List<String> command = new ArrayList<>();
-        command.add("./example_app_control.sh");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command.add("example_app_control.bat");
+        } else {
+            command.add("./example_app_control.sh");
+        }
         command.add("-s");
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
         processBuilder.start();
@@ -119,7 +123,11 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
 
     private void stopExampleApp() throws IOException {
         List<String> command = new ArrayList<>();
-        command.add("./example_app_control.sh");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command.add("example_app_control.bat");
+        } else {
+            command.add("./example_app_control.sh");
+        }
         command.add("-t");
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
         processBuilder.start();
