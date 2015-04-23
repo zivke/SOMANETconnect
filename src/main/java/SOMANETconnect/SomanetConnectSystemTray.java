@@ -11,9 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class SomanetConnectSystemTray {
-    private static final Logger logger = Logger.getLogger(SomanetConnectSystemTray.class.getName());
-
-    public SomanetConnectSystemTray() {
+    public SomanetConnectSystemTray() throws IOException {
         //Check the SystemTray is supported
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
@@ -43,12 +41,7 @@ public class SomanetConnectSystemTray {
         MenuItem exitItem = new MenuItem("Exit");
         popup.add(exitItem);
 
-        BufferedImage bufferedImage = null;
-        try {
-            bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+        BufferedImage bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
         final SystemTray tray = SystemTray.getSystemTray();
         Dimension trayIconSize = tray.getTrayIconSize();
         Image image = bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
