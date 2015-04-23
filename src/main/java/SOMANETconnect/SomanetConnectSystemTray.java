@@ -3,7 +3,10 @@ package SOMANETconnect;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -30,6 +33,11 @@ public class SomanetConnectSystemTray {
 
         popup.addSeparator();
         MenuItem aboutItem = new MenuItem("About");
+        aboutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Synapticon SOMANETconnect v1.0");
+            }
+        });
         popup.add(aboutItem);
 
         MenuItem exitItem = new MenuItem("Exit");
