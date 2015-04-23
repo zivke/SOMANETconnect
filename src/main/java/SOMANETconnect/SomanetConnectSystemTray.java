@@ -37,6 +37,11 @@ public class SomanetConnectSystemTray {
         popup.add(aboutItem);
 
         MenuItem exitItem = new MenuItem("Exit");
+        exitItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
         popup.add(exitItem);
 
         BufferedImage bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
