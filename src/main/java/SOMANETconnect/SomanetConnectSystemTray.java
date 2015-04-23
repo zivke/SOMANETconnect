@@ -1,5 +1,8 @@
 package SOMANETconnect;
 
+import SOMANETconnect.command.ListCommand;
+import org.apache.log4j.Logger;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +12,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
 
 public class SomanetConnectSystemTray {
+    private static final Logger logger = Logger.getLogger(SomanetConnectSystemTray.class.getName());
+
     public SomanetConnectSystemTray() throws IOException {
         //Check the SystemTray is supported
         if (!SystemTray.isSupported()) {
@@ -21,10 +27,32 @@ public class SomanetConnectSystemTray {
         final PopupMenu popup = new PopupMenu();
 
         //Add components to pop-up menu
-        Menu devicesMenu = new Menu("Devices");
-        popup.add(devicesMenu);
-        MenuItem dummyDevice = new MenuItem("Dummy SOMANET device");
-        devicesMenu.add(dummyDevice);
+        MenuItem devicesItem = new MenuItem("Devices");
+        devicesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ListCommand listCommand;
+                try {
+                    listCommand = new ListCommand();
+                } catch (IOException e2) {
+                    logger.error(e2.getMessage());
+                    return;
+                }
+                String devicesList = "";
+                java.util.List devices = listCommand.getDeviceList();
+                if (devices.isEmpty()) {
+                    devicesList = "No available devices";
+                } else {
+                    for (Object deviceObject : devices) {
+                        Map device = (Map) deviceObject;
+                        devicesList += device.get(Constants.ID) + "  " + device.get(Constants.NAME) + "  "
+                                + device.get(Constants.ADAPTER_ID) + "  " + device.get(Constants.DEVICES) + "\n";
+                    }
+                }
+                JOptionPane.showMessageDialog(null, devicesList, "Device List", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        popup.add(devicesItem);
 
         CheckboxMenuItem startOnBootItem = new CheckboxMenuItem("Start on boot");
         startOnBootItem.addItemListener(new ItemListener() {
