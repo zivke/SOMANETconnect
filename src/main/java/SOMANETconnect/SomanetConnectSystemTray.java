@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -25,6 +27,17 @@ public class SomanetConnectSystemTray {
         devicesMenu.add(dummyDevice);
 
         CheckboxMenuItem startOnBootItem = new CheckboxMenuItem("Start on boot");
+        startOnBootItem.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                int startOnBoot = e.getStateChange();
+                if (startOnBoot == ItemEvent.SELECTED) {
+                    JOptionPane.showMessageDialog(null, "Start on boot: Yes", "Dummy message", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Start on boot: No", "Dummy message", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
         popup.add(startOnBootItem);
 
         popup.addSeparator();
