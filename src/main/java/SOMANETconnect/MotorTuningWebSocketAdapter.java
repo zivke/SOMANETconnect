@@ -118,6 +118,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
         }
         command.add("-s");
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
+        processBuilder.environment().putAll(Constants.environmentVariables);
         processBuilder.start();
     }
 
@@ -130,6 +131,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
         }
         command.add("-t");
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true).inheritIO();
+        processBuilder.environment().putAll(Constants.environmentVariables);
         processBuilder.start();
     }
 
