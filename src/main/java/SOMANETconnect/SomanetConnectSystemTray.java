@@ -31,7 +31,7 @@ public class SomanetConnectSystemTray {
         MenuItem aboutItem = new MenuItem("About");
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Synapticon SOMANETconnect v1.0");
+                JOptionPane.showMessageDialog(null, "Synapticon SOMANETconnect v1.0", "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         popup.add(aboutItem);
