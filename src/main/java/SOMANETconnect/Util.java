@@ -1,11 +1,16 @@
 package SOMANETconnect;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinNT;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public final class Util {
@@ -26,6 +31,39 @@ public final class Util {
             remoteEndpoint.sendString(response.toString());
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    public static void killProcess(Process process) {
+        if (process == null) {
+            return;
+        }
+        if (SystemUtils.IS_OS_WINDOWS) {
+            if (process.getClass().getName().equals("java.lang.Win32Process") ||
+                    process.getClass().getName().equals("java.lang.ProcessImpl")) {
+                // Determine the pid on windows platforms
+                try {
+                    Field field = process.getClass().getDeclaredField("handle");
+                    field.setAccessible(true);
+                    long handleId = field.getLong(process);
+
+                    Kernel32 kernel = Kernel32.INSTANCE;
+                    WinNT.HANDLE handle = new WinNT.HANDLE();
+                    handle.setPointer(Pointer.createConstant(handleId));
+                    int pid = kernel.GetProcessId(handle);
+                    ArrayList<String> command = new ArrayList<>();
+                    command.add("taskkill");
+                    command.add("/f");
+                    command.add("/t");
+                    command.add("/pid");
+                    command.add(String.valueOf(pid));
+                    new SystemProcess(command);
+                } catch (Throwable e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        } else {
+            process.destroy();
         }
     }
 
