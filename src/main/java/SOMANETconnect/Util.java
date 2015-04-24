@@ -102,6 +102,18 @@ public final class Util {
             } else {
                 Files.deleteIfExists(desktopFile);
             }
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            RegKeyManager rkm = new RegKeyManager();
+            try {
+                if (startOnBoot) {
+                    rkm.add("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "SOMANETconnect", "REG_SZ",
+                            System.getProperty("user.dir") + "\\start.vbs");
+                } else {
+                    rkm.delete("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "SOMANETconnect");
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
     }
 
@@ -109,6 +121,14 @@ public final class Util {
         if (SystemUtils.IS_OS_LINUX) {
             Path desktopFile = Paths.get(System.getenv("HOME"), "/.config/autostart/SOMANETconnect.desktop");
             return Files.exists(desktopFile);
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            RegKeyManager rkm = new RegKeyManager();
+            try {
+                rkm.query("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "SOMANETconnect");
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
         }
         return false;
     }
