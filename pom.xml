@@ -58,6 +58,10 @@
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-codec.version>1.10</commons-codec.version>
         <commons-lang3.version>3.4</commons-lang3.version>
+
+        <!-- Sun JNA -->
+        <jna.version>4.1.0</jna.version>
+        <platform.version>3.4.0</platform.version>
     </properties>
 
     <build>
@@ -154,6 +158,18 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <!-- Sun JNA -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>platform</artifactId>
+            <version>${platform.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>${jna.version}</version>
         </dependency>
     </dependencies>
 </project>
