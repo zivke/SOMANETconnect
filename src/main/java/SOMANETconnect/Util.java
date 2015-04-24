@@ -11,6 +11,9 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public final class Util {
@@ -83,5 +86,30 @@ public final class Util {
         command.add("-f");
         command.add(requestId);
         new SystemProcess(command);
+    }
+
+    public static void startOnBoot(boolean startOnBoot) throws IOException {
+        if (SystemUtils.IS_OS_LINUX) {
+            Path desktopFile = Paths.get(System.getenv("HOME"), "/.config/autostart/SOMANETconnect.desktop");
+            if (startOnBoot) {
+                String applicationJarPath = System.getProperty("user.dir") + "/SOMANETconnect.jar";
+                String libPath = System.getProperty("user.dir") + "/lib";
+                String command = "java -Djava.library.path=" + libPath + " -cp " + applicationJarPath
+                        + " SOMANETconnect.SomanetConnect";
+                String desktopFileContent = "[Desktop Entry]\nType=Application\nName=SOMANETconnect\nPath="
+                        + System.getProperty("user.dir") + "\nExec=" + command + "\n";
+                Files.write(desktopFile, desktopFileContent.getBytes());
+            } else {
+                Files.deleteIfExists(desktopFile);
+            }
+        }
+    }
+
+    public static boolean isStartOnBootEnabled() {
+        if (SystemUtils.IS_OS_LINUX) {
+            Path desktopFile = Paths.get(System.getenv("HOME"), "/.config/autostart/SOMANETconnect.desktop");
+            return Files.exists(desktopFile);
+        }
+        return false;
     }
 }

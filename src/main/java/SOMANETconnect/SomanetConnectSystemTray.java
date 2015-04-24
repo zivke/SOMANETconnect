@@ -57,15 +57,15 @@ public class SomanetConnectSystemTray {
         CheckboxMenuItem startOnBootItem = new CheckboxMenuItem("Start on boot");
         startOnBootItem.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(ItemEvent e) {
-                int startOnBoot = e.getStateChange();
-                if (startOnBoot == ItemEvent.SELECTED) {
-                    JOptionPane.showMessageDialog(null, "Start on boot: Yes", "Dummy message", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Start on boot: No", "Dummy message", JOptionPane.INFORMATION_MESSAGE);
+            public void itemStateChanged(ItemEvent event) {
+                try {
+                    Util.startOnBoot(event.getStateChange() == ItemEvent.SELECTED);
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
                 }
             }
         });
+        startOnBootItem.setState(Util.isStartOnBootEnabled());
         popup.add(startOnBootItem);
 
         popup.addSeparator();
