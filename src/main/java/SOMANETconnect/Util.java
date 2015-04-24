@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public final class Util {
     private final static Logger logger = Logger.getLogger(Util.class.getName());
@@ -26,5 +27,23 @@ public final class Util {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    /**
+     * Kill any residual processes (that the main process may have started) by the unique name of the temporary file
+     * used in the original command (the temporary file contains the ID of the request that was used to start the
+     * process in its name).
+     *
+     * @param requestId ID of the request used to start the process (that needs cleaning up after)
+     * @throws IOException
+     */
+    public static void linuxProcessCleanup(String requestId) throws IOException {
+        // Kill any residual processes (that the main process may have started) by the unique name of
+        // the temporary file used in the original command
+        ArrayList<String> command = new ArrayList<>();
+        command.add("pkill");
+        command.add("-f");
+        command.add(requestId);
+        new SystemProcess(command);
     }
 }
