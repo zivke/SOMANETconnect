@@ -5,6 +5,7 @@ import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
@@ -60,15 +61,9 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
                 case Constants.INTERRUPT:
                     String requestIdToInterrupt = String.valueOf(request.getNamedParams().get(Constants.ID));
                     Process process = activeRequestRegister.get(requestIdToInterrupt);
-                    if (process != null) {
-                        process.destroy();
-                        ArrayList<String> command = new ArrayList<>();
-                        command.add("pkill");
-                        command.add("-f");
-                        command.add(requestIdToInterrupt);
-                        // Kill any residual processes (that the main process may have started) by the unique name of
-                        // the temporary file used in the original command
-                        new SystemProcess(command);
+                    Util.killProcess(process);
+                    if (SystemUtils.IS_OS_LINUX) {
+                        Util.linuxProcessCleanup(requestIdToInterrupt);
                     }
                     break;
                 default:
