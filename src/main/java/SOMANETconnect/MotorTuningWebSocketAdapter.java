@@ -137,15 +137,21 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
 
     private SystemProcess eraseFirmware(String deviceId, String deviceType) throws IOException {
         List<String> command = new ArrayList<>();
-        if (SystemUtils.IS_OS_WINDOWS) {
-            command.add("erase_firmware.bat");
-        } else {
-            command.add("./erase_firmware.sh");
-        }
-        command.add("-i");
+        command.add(System.getProperty("user.dir") + "/bin/xflash");
+        command.add("--id");
         command.add(deviceId);
-        command.add("-t");
-        command.add(deviceType);
+        command.add("--erase-all");
+        command.add("--target-file");
+        switch (deviceType.toLowerCase()) {
+            case "c21":
+                command.add("targets/SOMANET-C21-DX/SOMANET-C21-DX.xn");
+                break;
+            case "c22":
+                command.add("targets/SOMANET-C22/SOMANET-C22.xn");
+                break;
+            default:
+                throw new IOException("Unknown device type: " + deviceType);
+        }
         return new SystemProcess(command);
     }
 }
