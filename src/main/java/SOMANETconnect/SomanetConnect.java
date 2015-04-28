@@ -17,6 +17,8 @@ public class SomanetConnect {
         Server oblacServer = injector.getInstance(Key.get(Server.class, Names.named("OBLAC")));
         Server motorTuningServer = injector.getInstance(Key.get(Server.class, Names.named("MotorTuning")));
 
+        new SomanetConnectSystemTray();
+
         try {
             oblacServer.start();
             motorTuningServer.start();

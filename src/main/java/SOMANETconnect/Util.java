@@ -11,6 +11,9 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public final class Util {
@@ -83,5 +86,50 @@ public final class Util {
         command.add("-f");
         command.add(requestId);
         new SystemProcess(command);
+    }
+
+    public static void startOnBoot(boolean startOnBoot) throws IOException {
+        if (SystemUtils.IS_OS_LINUX) {
+            Path desktopFile = Paths.get(System.getenv("HOME"), "/.config/autostart/SOMANETconnect.desktop");
+            if (startOnBoot) {
+                String applicationJarPath = System.getProperty("user.dir") + "/SOMANETconnect.jar";
+                String libPath = System.getProperty("user.dir") + "/lib";
+                String command = "java -Djava.library.path=" + libPath + " -cp " + applicationJarPath
+                        + " SOMANETconnect.SomanetConnect";
+                String desktopFileContent = "[Desktop Entry]\nType=Application\nName=SOMANETconnect\nPath="
+                        + System.getProperty("user.dir") + "\nExec=" + command + "\n";
+                Files.write(desktopFile, desktopFileContent.getBytes());
+            } else {
+                Files.deleteIfExists(desktopFile);
+            }
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            RegKeyManager rkm = new RegKeyManager();
+            try {
+                if (startOnBoot) {
+                    rkm.add("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "SOMANETconnect", "REG_SZ",
+                            System.getProperty("user.dir") + "\\start.vbs");
+                } else {
+                    rkm.delete("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "SOMANETconnect");
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
+    public static boolean isStartOnBootEnabled() {
+        if (SystemUtils.IS_OS_LINUX) {
+            Path desktopFile = Paths.get(System.getenv("HOME"), "/.config/autostart/SOMANETconnect.desktop");
+            return Files.exists(desktopFile);
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            RegKeyManager rkm = new RegKeyManager();
+            try {
+                rkm.query("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "SOMANETconnect");
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }
