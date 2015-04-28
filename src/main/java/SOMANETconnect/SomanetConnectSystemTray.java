@@ -1,21 +1,22 @@
 package SOMANETconnect;
 
 import SOMANETconnect.command.ListCommand;
+import SOMANETconnect.ui.JPopupMenuEx;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SomanetConnectSystemTray {
     private static final Logger logger = Logger.getLogger(SomanetConnectSystemTray.class.getName());
+
+    private ArrayList<JMenuItem> currentDeviceMenuItems = new ArrayList<>();
 
     public SomanetConnectSystemTray() throws IOException {
         //Check the SystemTray is supported
@@ -24,37 +25,68 @@ public class SomanetConnectSystemTray {
             return;
         }
 
-        final PopupMenu popup = new PopupMenu();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        //Add components to pop-up menu
-        MenuItem devicesItem = new MenuItem("Devices");
-        devicesItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ListCommand listCommand;
-                try {
-                    listCommand = new ListCommand();
-                } catch (IOException e2) {
-                    logger.error(e2.getMessage());
-                    return;
+        BufferedImage bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
+        final SystemTray systemTray = SystemTray.getSystemTray();
+        Dimension trayIconSize = systemTray.getTrayIconSize();
+        Image image = bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
+        final TrayIcon trayIcon = new TrayIcon(image);
+
+        final JPopupMenuEx jPopupMenu = new JPopupMenuEx();
+
+        trayIcon.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
+                    jPopupMenu.setLocation(e.getX(), e.getY());
+                    jPopupMenu.setInvoker(jPopupMenu);
+                    jPopupMenu.setVisible(true);
+
+                    // Run the listing process in a separate thread, so that the context menu doesn't lag
+                    (new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ListCommand listCommand;
+                            try {
+                                listCommand = new ListCommand();
+                            } catch (IOException e2) {
+                                logger.error(e2.getMessage());
+                                return;
+                            }
+                            java.util.List devices = listCommand.getDeviceList();
+
+                            // Remove current device labels
+                            for (JMenuItem deviceMenuItem : currentDeviceMenuItems) {
+                                jPopupMenu.remove(deviceMenuItem);
+                            }
+                            currentDeviceMenuItems.clear();
+
+                            if (devices.isEmpty()) {
+                                JMenuItem noAvailableDevicesMenuItem = new JMenuItem("No available devices");
+                                jPopupMenu.insert(noAvailableDevicesMenuItem, currentDeviceMenuItems.size());
+                                currentDeviceMenuItems.add(noAvailableDevicesMenuItem);
+                            } else {
+                                for (Object deviceObject : devices) {
+                                    Map device = (Map) deviceObject;
+                                    JMenuItem deviceMenuItem = new JMenuItem(device.get(Constants.ID) + "  " + device.get(Constants.NAME) + "  "
+                                            + device.get(Constants.ADAPTER_ID) + "  " + device.get(Constants.DEVICES) + "\n");
+                                    jPopupMenu.insert(deviceMenuItem, currentDeviceMenuItems.size());
+                                    currentDeviceMenuItems.add(deviceMenuItem);
+                                }
+                            }
+                            jPopupMenu.updateUI();
+                        }
+                    })).start();
                 }
-                String devicesList = "";
-                java.util.List devices = listCommand.getDeviceList();
-                if (devices.isEmpty()) {
-                    devicesList = "No available devices";
-                } else {
-                    for (Object deviceObject : devices) {
-                        Map device = (Map) deviceObject;
-                        devicesList += device.get(Constants.ID) + "  " + device.get(Constants.NAME) + "  "
-                                + device.get(Constants.ADAPTER_ID) + "  " + device.get(Constants.DEVICES) + "\n";
-                    }
-                }
-                JOptionPane.showMessageDialog(null, devicesList, "Device List", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        popup.add(devicesItem);
 
-        CheckboxMenuItem startOnBootItem = new CheckboxMenuItem("Start on boot");
+        jPopupMenu.addSeparator();
+        JCheckBoxMenuItem startOnBootItem = new JCheckBoxMenuItem("Start on boot");
         startOnBootItem.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent event) {
@@ -66,34 +98,27 @@ public class SomanetConnectSystemTray {
             }
         });
         startOnBootItem.setState(Util.isStartOnBootEnabled());
-        popup.add(startOnBootItem);
+        jPopupMenu.add(startOnBootItem);
 
-        popup.addSeparator();
-        MenuItem aboutItem = new MenuItem("About");
+        JMenuItem aboutItem = new JMenuItem("About SOMANETconnect");
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Synapticon SOMANETconnect v1.0", "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        popup.add(aboutItem);
+        jPopupMenu.add(aboutItem);
 
-        MenuItem exitItem = new MenuItem("Exit");
+        JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                SystemTray.getSystemTray().remove(trayIcon);
                 System.exit(0);
             }
         });
-        popup.add(exitItem);
-
-        BufferedImage bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
-        final SystemTray tray = SystemTray.getSystemTray();
-        Dimension trayIconSize = tray.getTrayIconSize();
-        Image image = bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
-        TrayIcon trayIcon = new TrayIcon(image);
-        trayIcon.setPopupMenu(popup);
+        jPopupMenu.add(exitItem);
 
         try {
-            tray.add(trayIcon);
+            systemTray.add(trayIcon);
         } catch (AWTException e) {
             System.out.println("TrayIcon could not be added.");
         }
