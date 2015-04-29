@@ -2,6 +2,7 @@ package SOMANETconnect;
 
 import SOMANETconnect.command.ListCommand;
 import SOMANETconnect.ui.JPopupMenuEx;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -31,7 +32,14 @@ public class SomanetConnectSystemTray {
             e.printStackTrace();
         }
 
-        BufferedImage bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
+        BufferedImage bufferedImage;
+        // The system tray icon cannot be transparent in Linux
+        if (SystemUtils.IS_OS_LINUX) {
+            bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
+        } else {
+            bufferedImage =
+                    ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon_transparent.png"));
+        }
         final SystemTray systemTray = SystemTray.getSystemTray();
         Dimension trayIconSize = systemTray.getTrayIconSize();
         Image image = bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
