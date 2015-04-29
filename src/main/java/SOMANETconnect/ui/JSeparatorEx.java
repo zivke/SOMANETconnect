@@ -8,7 +8,7 @@ public class JSeparatorEx extends JSeparator {
         Dimension d = super.getPreferredSize();
 
         if (d.height == 0)
-            d.height = 4;
+            d.height = 2;
 
         return d;
     }
