@@ -34,12 +34,12 @@ public class ListCommand extends SystemProcess {
             output = output.substring(marker).trim();
             String[] lines = output.split(System.getProperty("line.separator"));
             for (String line : lines) {
-                String[] properties = line.trim().split("\\s+");
+                String[] properties = line.trim().split("\\t");
                 Map<String, String> device = new HashMap<>();
-                device.put(Constants.ID, properties[0]);
-                device.put(Constants.NAME, properties[1]);
-                device.put(Constants.ADAPTER_ID, properties[2]);
-                device.put(Constants.DEVICES, properties[3]);
+                device.put(Constants.ID, properties[0].trim());
+                device.put(Constants.NAME, properties[1].trim());
+                device.put(Constants.ADAPTER_ID, properties[2].trim());
+                device.put(Constants.DEVICES, properties[3].trim());
 
                 deviceList.add(device);
             }
