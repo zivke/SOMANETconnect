@@ -80,8 +80,17 @@ public class SomanetConnectSystemTray {
                             } else {
                                 for (Object deviceObject : devices) {
                                     Map device = (Map) deviceObject;
-                                    JMenuItem deviceMenuItem = new JMenuItem(device.get(Constants.ID) + "  " + device.get(Constants.NAME) + "  "
-                                            + device.get(Constants.ADAPTER_ID) + "  " + device.get(Constants.DEVICES) + "\n");
+                                    String tileString = (String) device.get(Constants.DEVICES);
+                                    JMenuItem deviceMenuItem;
+                                    if (tileString.equalsIgnoreCase("in use")) {
+                                        deviceMenuItem = new JMenuItem(
+                                                "Device in use    (Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
+                                    } else {
+                                        tileString = tileString.substring(5, tileString.length() - 1);
+                                        int tileNumber = Integer.valueOf(tileString) + 1;
+                                        deviceMenuItem = new JMenuItem(
+                                                tileNumber + " tile device    (Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
+                                    }
                                     jPopupMenu.insert(deviceMenuItem, currentDeviceMenuItems.size());
                                     currentDeviceMenuItems.add(deviceMenuItem);
                                 }
