@@ -76,6 +76,7 @@ public class SomanetConnectSystemTray {
                             if (devices.isEmpty()) {
                                 JMenuItem noAvailableDevicesMenuItem = new JMenuItem("No available devices");
                                 jPopupMenu.insert(noAvailableDevicesMenuItem, currentDeviceMenuItems.size());
+
                                 currentDeviceMenuItems.add(noAvailableDevicesMenuItem);
                             } else {
                                 for (Object deviceObject : devices) {
@@ -92,10 +93,14 @@ public class SomanetConnectSystemTray {
                                                 tileNumber + " tile device    (Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
                                     }
                                     jPopupMenu.insert(deviceMenuItem, currentDeviceMenuItems.size());
+
                                     currentDeviceMenuItems.add(deviceMenuItem);
                                 }
                             }
-                            jPopupMenu.updateUI();
+                            // Resize the ancestor window of the popup menu to the required size
+                            Window window = SwingUtilities.getWindowAncestor(jPopupMenu);
+                            window.pack();
+                            window.validate();
                         }
                     })).start();
                 }
