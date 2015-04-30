@@ -1,6 +1,9 @@
 package SOMANETconnect.ui;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -17,13 +20,31 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
 
     @Override
     public void addSeparator() {
-        add(new JSeparatorEx());
+        JSeparatorEx separator = new JSeparatorEx();
+        setColors(separator);
+        add(separator);
     }
 
     @Override
     public JMenuItem add(JMenuItem menuItem) {
         menuItem.addMouseListener(this);
+        setColors(menuItem);
         return super.add(menuItem);
+    }
+
+    @Override
+    public JMenuItem add(String text) {
+        JMenuItem menuItem = new JMenuItem(text);
+        menuItem.addMouseListener(this);
+        setColors(menuItem);
+        return super.add(menuItem);
+    }
+
+    @Override
+    public void insert(Component component, int index) {
+        component.addMouseListener(this);
+        setColors((JComponent) component);
+        super.insert(component, index);
     }
 
     @Override
@@ -49,5 +70,13 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
+    }
+
+    private static void setColors(JComponent component) {
+        if (SystemUtils.IS_OS_LINUX) {
+            component.setBackground(new Color(87, 85, 79));
+            component.setForeground(Color.WHITE);
+            component.setOpaque(true);
+        }
     }
 }

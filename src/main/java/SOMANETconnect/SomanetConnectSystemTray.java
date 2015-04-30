@@ -42,7 +42,6 @@ public class SomanetConnectSystemTray {
 
             if (devices.isEmpty()) {
                 JMenuItem noAvailableDevicesMenuItem = new JMenuItem("No available devices");
-                setColors(noAvailableDevicesMenuItem);
                 popupMenu.insert(noAvailableDevicesMenuItem, currentDeviceMenuItems.size());
 
                 currentDeviceMenuItems.add(noAvailableDevicesMenuItem);
@@ -60,7 +59,6 @@ public class SomanetConnectSystemTray {
                         deviceMenuItem = new JMenuItem(
                                 tileNumber + " tile device    (Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
                     }
-                    setColors(deviceMenuItem);
                     popupMenu.insert(deviceMenuItem, currentDeviceMenuItems.size());
 
                     currentDeviceMenuItems.add(deviceMenuItem);
@@ -112,7 +110,6 @@ public class SomanetConnectSystemTray {
         popupMenu = new JPopupMenuEx();
 
         popupMenu.addSeparator();
-        setColors((JComponent) popupMenu.getComponent(0));
 
         JCheckBoxMenuItem startOnBootItem = new JCheckBoxMenuItem("Start on boot");
         startOnBootItem.addItemListener(new ItemListener() {
@@ -126,7 +123,6 @@ public class SomanetConnectSystemTray {
             }
         });
         startOnBootItem.setState(Util.isStartOnBootEnabled());
-        setColors(startOnBootItem);
         popupMenu.add(startOnBootItem);
 
         JMenuItem aboutItem = new JMenuItem("About SOMANETconnect");
@@ -135,7 +131,6 @@ public class SomanetConnectSystemTray {
                 JOptionPane.showMessageDialog(null, "Synapticon SOMANETconnect v1.0", "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        setColors(aboutItem);
         popupMenu.add(aboutItem);
 
         JMenuItem exitItem = new JMenuItem("Exit");
@@ -145,7 +140,6 @@ public class SomanetConnectSystemTray {
                 System.exit(0);
             }
         });
-        setColors(exitItem);
         popupMenu.add(exitItem);
 
         popupMenu.setBorder(BorderFactory.createEmptyBorder());
@@ -174,14 +168,6 @@ public class SomanetConnectSystemTray {
         }
     }
 
-    private static void setColors(JComponent component) {
-        if (SystemUtils.IS_OS_LINUX) {
-            component.setBackground(new Color(87, 85, 79));
-            component.setForeground(Color.WHITE);
-            component.setOpaque(true);
-        }
-    }
-
     /**
      * Remove all device that are currently in the device list inside the popup menu
      */
@@ -196,7 +182,6 @@ public class SomanetConnectSystemTray {
         clearDeviceList();
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         JMenuItem loadingMenuItem = new JMenuItem("Loading...");
-        setColors(loadingMenuItem);
         popupMenu.insert(loadingMenuItem, currentDeviceMenuItems.size());
         popupMenu.pack();
         currentDeviceMenuItems.add(loadingMenuItem);
