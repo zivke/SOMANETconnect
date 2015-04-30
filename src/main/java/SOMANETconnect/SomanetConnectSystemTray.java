@@ -76,7 +76,7 @@ public class SomanetConnectSystemTray {
         }
     }
 
-    public SomanetConnectSystemTray() throws IOException {
+    public SomanetConnectSystemTray() {
         //Check the SystemTray is supported
         if (!SystemTray.isSupported()) {
             logger.error("SystemTray is not supported");
@@ -94,17 +94,26 @@ public class SomanetConnectSystemTray {
         initTrayIcon();
     }
 
-    private static Image getIconImage() throws IOException {
+    private static Image getIconImage() {
         BufferedImage bufferedImage;
         // The system tray icon cannot be transparent in Linux
         if (SystemUtils.IS_OS_LINUX) {
-            bufferedImage = ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon.png"));
+            bufferedImage = getImageFromResource("synapticon_tray_icon.png");
         } else {
-            bufferedImage =
-                    ImageIO.read(SomanetConnect.class.getResourceAsStream("/synapticon_tray_icon_transparent.png"));
+            bufferedImage = getImageFromResource("synapticon_tray_icon_transparent.png");
         }
         Dimension trayIconSize = SystemTray.getSystemTray().getTrayIconSize();
         return bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
+    }
+
+    private static BufferedImage getImageFromResource(String name) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(SomanetConnect.class.getResourceAsStream("/" + name));
+        } catch (IOException e) {
+            logger.error("Failed to read the icon image");
+        }
+        return image;
     }
 
     private void initPopupMenu() {
@@ -146,7 +155,7 @@ public class SomanetConnectSystemTray {
         popupMenu.setBorder(BorderFactory.createEmptyBorder());
     }
 
-    private void initTrayIcon() throws IOException {
+    private void initTrayIcon() {
         trayIcon = new TrayIcon(getIconImage());
 
         trayIcon.addMouseListener(new MouseAdapter() {
