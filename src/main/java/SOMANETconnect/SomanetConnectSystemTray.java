@@ -19,7 +19,7 @@ public class SomanetConnectSystemTray {
 
     private TrayIcon trayIcon;
     private JPopupMenuEx popupMenu;
-    private ArrayList<JMenuItem> currentDeviceMenuItems = new ArrayList<>();
+    private ArrayList<JComponent> currentDeviceMenuItems = new ArrayList<>();
 
     /**
      * A worker class that finds all available devices and puts them into the popup menu
@@ -27,6 +27,8 @@ public class SomanetConnectSystemTray {
     private class Worker implements Runnable {
         @Override
         public void run() {
+            showLoading();
+
             ListCommand listCommand;
             try {
                 listCommand = new ListCommand();
@@ -34,13 +36,9 @@ public class SomanetConnectSystemTray {
                 logger.error(e2.getMessage());
                 return;
             }
-            java.util.List devices = listCommand.getDeviceList();
 
-            // Remove current device labels
-            for (JMenuItem deviceMenuItem : currentDeviceMenuItems) {
-                popupMenu.remove(deviceMenuItem);
-            }
-            currentDeviceMenuItems.clear();
+            java.util.List devices = listCommand.getDeviceList();
+            clearDeviceList();
 
             if (devices.isEmpty()) {
                 JMenuItem noAvailableDevicesMenuItem = new JMenuItem("No available devices");
@@ -68,12 +66,14 @@ public class SomanetConnectSystemTray {
                     currentDeviceMenuItems.add(deviceMenuItem);
                 }
             }
-            // Resize the ancestor window of the popup menu to the required size
+            // Resize the ancestor window of the popup menu to the required size. The popupMenu.pack() is not used
+            // because it causes the popup menu to flicker.
             Window window = SwingUtilities.getWindowAncestor(popupMenu);
             if (window != null) {
                 window.pack();
                 window.validate();
             }
+            popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -180,5 +180,25 @@ public class SomanetConnectSystemTray {
             component.setForeground(Color.WHITE);
             component.setOpaque(true);
         }
+    }
+
+    /**
+     * Remove all device that are currently in the device list inside the popup menu
+     */
+    private void clearDeviceList() {
+        for (JComponent deviceMenuItem : currentDeviceMenuItems) {
+            popupMenu.remove(deviceMenuItem);
+        }
+        currentDeviceMenuItems.clear();
+    }
+
+    private void showLoading() {
+        clearDeviceList();
+        popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        JMenuItem loadingMenuItem = new JMenuItem("Loading...");
+        setColors(loadingMenuItem);
+        popupMenu.insert(loadingMenuItem, currentDeviceMenuItems.size());
+        popupMenu.pack();
+        currentDeviceMenuItems.add(loadingMenuItem);
     }
 }
