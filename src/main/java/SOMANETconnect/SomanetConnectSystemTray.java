@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -185,5 +186,9 @@ public class SomanetConnectSystemTray {
         popupMenu.insert(loadingMenuItem, currentDeviceMenuItems.size());
         popupMenu.pack();
         currentDeviceMenuItems.add(loadingMenuItem);
+    }
+
+    public void showError(String message) {
+        trayIcon.displayMessage("Error", message, MessageType.ERROR);
     }
 }
