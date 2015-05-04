@@ -30,6 +30,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
         getSession().getPolicy().setMaxTextMessageSize(10 * MB);
         getSession().setIdleTimeout(-1);
         logger.info("Socket connected to " + session.getRemoteAddress());
+        SomanetConnect.somanetConnectSystemTray.oblacConnected(true);
     }
 
     @Override
@@ -78,6 +79,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
         logger.info("Socket Closed: [" + statusCode + "] " + reason);
+        SomanetConnect.somanetConnectSystemTray.oblacConnected(false);
     }
 
     @Override

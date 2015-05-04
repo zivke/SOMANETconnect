@@ -14,12 +14,12 @@ import java.net.BindException;
 public class SomanetConnect {
 
     private static final Logger logger = Logger.getLogger(SystemProcessLive.class.getName());
+    public static SomanetConnectSystemTray somanetConnectSystemTray = new SomanetConnectSystemTray();
 
     public static void main(String[] args) throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
         Server oblacServer = injector.getInstance(Key.get(Server.class, Names.named("OBLAC")));
         Server motorTuningServer = injector.getInstance(Key.get(Server.class, Names.named("MotorTuning")));
-        SomanetConnectSystemTray somanetConnectSystemTray = injector.getInstance(SomanetConnectSystemTray.class);
 
         try {
             oblacServer.start();
