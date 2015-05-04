@@ -21,6 +21,7 @@ public class SomanetConnectSystemTray {
     private TrayIcon trayIcon;
     private JPopupMenuEx popupMenu;
     private ArrayList<JComponent> currentDeviceMenuItems = new ArrayList<>();
+    private JLabel oblacConnectionStatus;
 
     /**
      * A worker class that finds all available devices and puts them into the popup menu
@@ -43,26 +44,13 @@ public class SomanetConnectSystemTray {
 
             if (devices.isEmpty()) {
                 JMenuItem noAvailableDevicesMenuItem = new JMenuItem("No available devices");
-                popupMenu.insert(noAvailableDevicesMenuItem, currentDeviceMenuItems.size());
+                popupMenu.insert(noAvailableDevicesMenuItem, 2);
 
                 currentDeviceMenuItems.add(noAvailableDevicesMenuItem);
             } else {
                 for (Object deviceObject : devices) {
                     Map device = (Map) deviceObject;
-                    String tileString = (String) device.get(Constants.DEVICES);
-                    JMenuItem deviceMenuItem;
-                    if (tileString.equalsIgnoreCase("in use")) {
-                        deviceMenuItem = new JMenuItem(
-                                "Device in use    (Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
-                    } else {
-                        tileString = tileString.substring(5, tileString.length() - 1);
-                        int tileNumber = Integer.valueOf(tileString) + 1;
-                        deviceMenuItem = new JMenuItem(
-                                tileNumber + " tile device    (Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
-                    }
-                    popupMenu.insert(deviceMenuItem, currentDeviceMenuItems.size());
-
-                    currentDeviceMenuItems.add(deviceMenuItem);
+                    addDeviceToList(device);
                 }
             }
             // Resize the ancestor window of the popup menu to the required size. The popupMenu.pack() is not used
@@ -92,6 +80,10 @@ public class SomanetConnectSystemTray {
 
         initPopupMenu();
         initTrayIcon();
+
+        // Set the OBLAC disconnected label as default
+        oblacConnectionStatus.setText("DISCONNECTED");
+        oblacConnectionStatus.setForeground(Color.RED);
     }
 
     private static Image getIconImage() {
@@ -119,6 +111,8 @@ public class SomanetConnectSystemTray {
     private void initPopupMenu() {
         popupMenu = new JPopupMenuEx();
 
+        popupMenu.add(setupOblacStatusPanel());
+        popupMenu.addSeparator();
         popupMenu.addSeparator();
 
         JCheckBoxMenuItem startOnBootItem = new JCheckBoxMenuItem("Start on boot");
@@ -178,6 +172,52 @@ public class SomanetConnectSystemTray {
         }
     }
 
+    private JPanel setupOblacStatusPanel() {
+        Icon oblacIcon;
+        if (SystemUtils.IS_OS_LINUX) {
+            oblacIcon = new ImageIcon(getImageFromResource("oblac_light.png"));
+        } else {
+            oblacIcon = new ImageIcon(getImageFromResource("oblac_dark.png"));
+        }
+        JPanel oblacPanel = new JPanel();
+        oblacPanel.setLayout(new BoxLayout(oblacPanel, BoxLayout.X_AXIS));
+        // Add a left "margin" and set the default height of the panel
+        oblacPanel.add(Box.createRigidArea(new Dimension(10, 25)));
+        JLabel oblacLabel = new JLabel("OBLAC IDE", oblacIcon, SwingConstants.LEFT);
+        oblacConnectionStatus = new JLabel("DISCONNECTED");
+        oblacPanel.add(oblacLabel);
+        oblacPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        oblacPanel.add(Box.createHorizontalGlue());
+        oblacPanel.add(oblacConnectionStatus);
+        oblacPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        return oblacPanel;
+    }
+
+    private void addDeviceToList(Map device) {
+        String tileString = (String) device.get(Constants.DEVICES);
+        JPanel devicePanel = new JPanel();
+        devicePanel.setLayout(new BoxLayout(devicePanel, BoxLayout.X_AXIS));
+        // Add a left "margin" and set the default height of the panel
+        devicePanel.add(Box.createRigidArea(new Dimension(34, 25)));
+        JLabel deviceTilesLabel;
+        if (tileString.equalsIgnoreCase("in use")) {
+            deviceTilesLabel = new JLabel("Device in use");
+        } else {
+            tileString = tileString.substring(5, tileString.length() - 1);
+            int tileNumber = Integer.valueOf(tileString) + 1;
+            deviceTilesLabel = new JLabel(tileNumber + " tile device");
+        }
+        devicePanel.add(deviceTilesLabel);
+        devicePanel.add(Box.createRigidArea(new Dimension(30, 0)));
+        devicePanel.add(Box.createHorizontalGlue());
+        JLabel adapterIdLabel = new JLabel("(Adapter: " + device.get(Constants.ADAPTER_ID) + ")");
+        devicePanel.add(adapterIdLabel);
+        devicePanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        popupMenu.insert(devicePanel, currentDeviceMenuItems.size() + 2);
+
+        currentDeviceMenuItems.add(devicePanel);
+    }
+
     /**
      * Remove all device that are currently in the device list inside the popup menu
      */
@@ -192,12 +232,28 @@ public class SomanetConnectSystemTray {
         clearDeviceList();
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         JMenuItem loadingMenuItem = new JMenuItem("Loading...");
-        popupMenu.insert(loadingMenuItem, currentDeviceMenuItems.size());
+        popupMenu.insert(loadingMenuItem, 2);
         popupMenu.pack();
         currentDeviceMenuItems.add(loadingMenuItem);
     }
 
     public void showError(String message) {
         trayIcon.displayMessage("Error", message, MessageType.ERROR);
+    }
+
+    public void showInfo(String message) {
+        trayIcon.displayMessage("Info", message, MessageType.INFO);
+    }
+
+    public void oblacConnected(boolean connected) {
+        if (connected) {
+            showInfo("OBLAC connected successfully");
+            oblacConnectionStatus.setText("CONNECTED");
+            oblacConnectionStatus.setForeground(Color.GREEN);
+        } else {
+            showInfo("OBLAC disconnected");
+            oblacConnectionStatus.setText("DISCONNECTED");
+            oblacConnectionStatus.setForeground(Color.RED);
+        }
     }
 }

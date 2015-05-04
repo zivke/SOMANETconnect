@@ -1,6 +1,5 @@
 package SOMANETconnect.ui;
 
-import org.apache.commons.lang3.SystemUtils;
 import SOMANETconnect.Util;
 
 import javax.swing.*;
@@ -30,6 +29,7 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     public JMenuItem add(JMenuItem menuItem) {
         menuItem.addMouseListener(this);
         Util.setColors(menuItem);
+        menuItem.setMargin(new Insets(0, 10, 0, 0));
         return super.add(menuItem);
     }
 
@@ -38,26 +38,38 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
         JMenuItem menuItem = new JMenuItem(text);
         menuItem.addMouseListener(this);
         Util.setColors(menuItem);
+        menuItem.setMargin(new Insets(0, 10, 0, 0));
         return super.add(menuItem);
     }
 
-    @Override
-    public void insert(Component component, int index) {
-        component.addMouseListener(this);
-        super.insert(component, index);
+    public JPanel add(JPanel panel) {
+        panel.addMouseListener(this);
+        Util.setColors(panel);
+        return (JPanel) super.add(panel);
+    }
+
+    public void insert(JMenuItem menuItem, int index) {
+        menuItem.addMouseListener(this);
+        Util.setColors(menuItem);
+        menuItem.setMargin(new Insets(0, 10, 0, 0));
+        super.insert(menuItem, index);
+    }
+
+    public void insert(JPanel panel, int index) {
+        panel.addMouseListener(this);
+        Util.setColors(panel);
+        super.insert(panel, index);
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         hideTimer.stop();
-        ((JMenuItem) e.getSource()).setArmed(true);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         hideTimer.setRepeats(false);
         hideTimer.restart();
-        ((JMenuItem) e.getSource()).setArmed(false);
     }
 
     @Override
@@ -70,13 +82,5 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-    }
-
-    private static void setColors(JComponent component) {
-        if (SystemUtils.IS_OS_LINUX) {
-            component.setBackground(new Color(87, 85, 79));
-            component.setForeground(Color.WHITE);
-            component.setOpaque(true);
-        }
     }
 }
