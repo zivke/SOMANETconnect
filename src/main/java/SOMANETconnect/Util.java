@@ -9,6 +9,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -131,5 +133,20 @@ public final class Util {
             return true;
         }
         return false;
+    }
+
+    public static void setColors(JComponent component) {
+        if (SystemUtils.IS_OS_LINUX) {
+            component.setBackground(new Color(87, 85, 79));
+            component.setForeground(Color.WHITE);
+            component.setOpaque(true);
+            if (component instanceof JPanel) {
+                for (Component innerComponent : component.getComponents()) {
+                    if (innerComponent instanceof JLabel) {
+                        innerComponent.setForeground(Color.WHITE);
+                    }
+                }
+            }
+        }
     }
 }
