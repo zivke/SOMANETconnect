@@ -86,28 +86,6 @@ public class SomanetConnectSystemTray {
         oblacConnectionStatus.setForeground(Color.RED);
     }
 
-    private static Image getIconImage() {
-        BufferedImage bufferedImage;
-        // The system tray icon cannot be transparent in Linux
-        if (SystemUtils.IS_OS_LINUX) {
-            bufferedImage = getImageFromResource("synapticon_tray_icon.png");
-        } else {
-            bufferedImage = getImageFromResource("synapticon_tray_icon_transparent.png");
-        }
-        Dimension trayIconSize = SystemTray.getSystemTray().getTrayIconSize();
-        return bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
-    }
-
-    private static BufferedImage getImageFromResource(String name) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(SomanetConnect.class.getResourceAsStream("/" + name));
-        } catch (IOException e) {
-            logger.error("Failed to read the icon image");
-        }
-        return image;
-    }
-
     private void initPopupMenu() {
         popupMenu = new JPopupMenuEx();
 
@@ -255,5 +233,27 @@ public class SomanetConnectSystemTray {
             oblacConnectionStatus.setText("DISCONNECTED");
             oblacConnectionStatus.setForeground(Color.RED);
         }
+    }
+
+    private static BufferedImage getImageFromResource(String name) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(SomanetConnect.class.getResourceAsStream("/" + name));
+        } catch (IOException e) {
+            logger.error("Failed to read the icon image");
+        }
+        return image;
+    }
+
+    private static Image getIconImage() {
+        BufferedImage bufferedImage;
+        // The system tray icon cannot be transparent in Linux
+        if (SystemUtils.IS_OS_LINUX) {
+            bufferedImage = getImageFromResource("synapticon_tray_icon.png");
+        } else {
+            bufferedImage = getImageFromResource("synapticon_tray_icon_transparent.png");
+        }
+        Dimension trayIconSize = SystemTray.getSystemTray().getTrayIconSize();
+        return bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
     }
 }
