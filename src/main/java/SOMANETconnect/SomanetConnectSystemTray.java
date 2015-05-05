@@ -42,10 +42,12 @@ public class SomanetConnectSystemTray {
             clearDeviceList();
 
             if (devices.isEmpty()) {
-                JMenuItem noAvailableDevicesMenuItem = new JMenuItem("No available devices");
-                popupMenu.insert(noAvailableDevicesMenuItem, 2);
+                JPanel devicePanel = new JPanel();
+                JLabel noAvailableDevicesMenuItem = new JLabel("No available devices");
+                devicePanel.add(noAvailableDevicesMenuItem);
+                popupMenu.insert(devicePanel, 2);
 
-                currentDeviceMenuItems.add(noAvailableDevicesMenuItem);
+                currentDeviceMenuItems.add(devicePanel);
             } else {
                 for (Object deviceObject : devices) {
                     Map device = (Map) deviceObject;
