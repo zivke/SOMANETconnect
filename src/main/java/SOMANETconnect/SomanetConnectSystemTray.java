@@ -5,7 +5,6 @@ import SOMANETconnect.ui.JPopupMenuEx;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
@@ -128,7 +127,7 @@ public class SomanetConnectSystemTray {
     }
 
     private void initTrayIcon() {
-        trayIcon = new TrayIcon(getIconImage());
+        trayIcon = new TrayIcon(getTrayIconImage());
 
         trayIcon.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
@@ -153,9 +152,9 @@ public class SomanetConnectSystemTray {
     private JPanel setupOblacStatusPanel() {
         Icon oblacIcon;
         if (SystemUtils.IS_OS_LINUX) {
-            oblacIcon = new ImageIcon(getImageFromResource("oblac_light.png"));
+            oblacIcon = new ImageIcon(Util.getImageFromResource("oblac_light.png"));
         } else {
-            oblacIcon = new ImageIcon(getImageFromResource("oblac_dark.png"));
+            oblacIcon = new ImageIcon(Util.getImageFromResource("oblac_dark.png"));
         }
         JPanel oblacPanel = new JPanel();
         oblacPanel.setLayout(new BoxLayout(oblacPanel, BoxLayout.X_AXIS));
@@ -235,23 +234,13 @@ public class SomanetConnectSystemTray {
         }
     }
 
-    private static BufferedImage getImageFromResource(String name) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(SomanetConnect.class.getResourceAsStream("/" + name));
-        } catch (IOException e) {
-            logger.error("Failed to read the icon image");
-        }
-        return image;
-    }
-
-    private static Image getIconImage() {
+    private static Image getTrayIconImage() {
         BufferedImage bufferedImage;
         // The system tray icon cannot be transparent in Linux
         if (SystemUtils.IS_OS_LINUX) {
-            bufferedImage = getImageFromResource("synapticon_tray_icon.png");
+            bufferedImage = Util.getImageFromResource("synapticon_tray_icon.png");
         } else {
-            bufferedImage = getImageFromResource("synapticon_tray_icon_transparent.png");
+            bufferedImage = Util.getImageFromResource("synapticon_tray_icon_transparent.png");
         }
         Dimension trayIconSize = SystemTray.getSystemTray().getTrayIconSize();
         return bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);

@@ -9,8 +9,10 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -92,7 +94,7 @@ public final class Util {
 
     public static void startOnBoot(boolean startOnBoot) throws IOException {
         if (SystemUtils.IS_OS_LINUX) {
-            Path autoStartDir = Paths.get(System.getenv("HOME"), ".config/autostart");
+            Path autoStartDir = Paths.get(System.getenv("HOME"), ".config", "autostart");
             if (!Files.exists(autoStartDir)) {
                 Files.createDirectories(autoStartDir);
             }
@@ -152,5 +154,15 @@ public final class Util {
                 }
             }
         }
+    }
+
+    public static BufferedImage getImageFromResource(String name) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(SomanetConnect.class.getResourceAsStream("/" + name));
+        } catch (IOException e) {
+            logger.error("Failed to read the icon image");
+        }
+        return image;
     }
 }
