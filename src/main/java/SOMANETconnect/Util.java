@@ -92,7 +92,11 @@ public final class Util {
 
     public static void startOnBoot(boolean startOnBoot) throws IOException {
         if (SystemUtils.IS_OS_LINUX) {
-            Path desktopFile = Paths.get(System.getenv("HOME"), "/.config/autostart/SOMANETconnect.desktop");
+            Path autoStartDir = Paths.get(System.getenv("HOME"), ".config/autostart");
+            if (!Files.exists(autoStartDir)) {
+                Files.createDirectories(autoStartDir);
+            }
+            Path desktopFile = Paths.get(autoStartDir.toString(), "SOMANETconnect.desktop");
             if (startOnBoot) {
                 String applicationJarPath = System.getProperty("user.dir") + "/SOMANETconnect.jar";
                 String libPath = System.getProperty("user.dir") + "/lib";
