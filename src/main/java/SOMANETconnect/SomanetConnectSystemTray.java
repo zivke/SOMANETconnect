@@ -95,6 +95,7 @@ public class SomanetConnectSystemTray {
         popupMenu.addSeparator();
 
         JCheckBoxMenuItem startOnBootItem = new JCheckBoxMenuItem("Start on boot");
+        startOnBootItem.setState(Util.isStartOnBootEnabled());
         startOnBootItem.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent event) {
@@ -105,7 +106,6 @@ public class SomanetConnectSystemTray {
                 }
             }
         });
-        startOnBootItem.setState(Util.isStartOnBootEnabled());
         popupMenu.add(startOnBootItem);
 
         JMenuItem aboutItem = new JMenuItem("About SOMANETconnect");
