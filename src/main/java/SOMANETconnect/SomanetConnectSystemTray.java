@@ -95,6 +95,9 @@ public class SomanetConnectSystemTray {
 
         popupMenu.add(setupOblacStatusPanel());
         popupMenu.addSeparator();
+        JMenuItem loadingMenuItem = new JMenuItem("Loading...");
+        popupMenu.add(loadingMenuItem);
+        currentDeviceMenuItems.add(loadingMenuItem);
         popupMenu.addSeparator();
 
         JCheckBoxMenuItem startOnBootItem = new JCheckBoxMenuItem("Start on boot");
