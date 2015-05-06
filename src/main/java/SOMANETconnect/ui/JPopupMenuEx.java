@@ -17,6 +17,12 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
             JPopupMenuEx.this.setVisible(false);
         }
     });
+    Timer forceHideTimer = new Timer(2000, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JPopupMenuEx.this.setVisible(false);
+        }
+    });
 
     @Override
     public void addSeparator() {
@@ -62,8 +68,18 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     }
 
     @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            forceHideTimer.setRepeats(false);
+            forceHideTimer.restart();
+        }
+        super.setVisible(b);
+    }
+
+    @Override
     public void mouseEntered(MouseEvent e) {
         hideTimer.stop();
+        forceHideTimer.stop();
     }
 
     @Override
