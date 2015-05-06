@@ -143,7 +143,7 @@ public final class Util {
 
     public static void setColors(JComponent component) {
         if (SystemUtils.IS_OS_LINUX) {
-            component.setBackground(new Color(87, 85, 79));
+            component.setBackground(new Color(103, 101, 94));
             component.setForeground(Color.WHITE);
             component.setOpaque(true);
             if (component instanceof JPanel) {
