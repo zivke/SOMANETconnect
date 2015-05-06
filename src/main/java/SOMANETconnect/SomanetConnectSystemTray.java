@@ -134,7 +134,7 @@ public class SomanetConnectSystemTray {
         trayIcon.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
-                    popupMenu.setLocation(e.getX(), e.getY());
+                    popupMenu.setLocation(Util.getPopupMenuPosition(popupMenu, e));
                     popupMenu.setInvoker(popupMenu);
                     popupMenu.setVisible(true);
 

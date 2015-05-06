@@ -12,6 +12,7 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -164,5 +165,90 @@ public final class Util {
             logger.error("Failed to read the icon image");
         }
         return image;
+    }
+
+    public static Point getPopupMenuPosition(JPopupMenu popupMenu, MouseEvent e) {
+        Rectangle bounds = getSafeScreenBounds(e.getPoint());
+
+        Point point = e.getPoint();
+
+        int x = point.x;
+        int y = point.y;
+        if (y < bounds.y) {
+            y = bounds.y;
+        } else if (y > bounds.y + bounds.height) {
+            y = bounds.y + bounds.height;
+        }
+        if (x < bounds.x) {
+            x = bounds.x;
+        } else if (x > bounds.x + bounds.width) {
+            x = bounds.x + bounds.width;
+        }
+
+        if (x + popupMenu.getPreferredSize().width > bounds.x + bounds.width) {
+            x = (bounds.x + bounds.width) - popupMenu.getPreferredSize().width;
+        }
+        if (y + popupMenu.getPreferredSize().height > bounds.y + bounds.height) {
+            y = (bounds.y + bounds.height) - popupMenu.getPreferredSize().height;
+        }
+        return new Point(x, y);
+    }
+
+
+    private static Rectangle getSafeScreenBounds(Point pos) {
+        Rectangle bounds = getScreenBoundsAt(pos);
+        Insets insets = getScreenInsetsAt(pos);
+
+        bounds.x += insets.left;
+        bounds.y += insets.top;
+        bounds.width -= (insets.left + insets.right);
+        bounds.height -= (insets.top + insets.bottom);
+
+        return bounds;
+    }
+
+    private static Insets getScreenInsetsAt(Point pos) {
+        GraphicsDevice gd = getGraphicsDeviceAt(pos);
+        Insets insets = null;
+        if (gd != null) {
+            insets = Toolkit.getDefaultToolkit().getScreenInsets(gd.getDefaultConfiguration());
+        }
+        return insets;
+    }
+
+    private static Rectangle getScreenBoundsAt(Point pos) {
+        GraphicsDevice gd = getGraphicsDeviceAt(pos);
+        Rectangle bounds = null;
+        if (gd != null) {
+            bounds = gd.getDefaultConfiguration().getBounds();
+        }
+        return bounds;
+    }
+
+    private static GraphicsDevice getGraphicsDeviceAt(Point pos) {
+        GraphicsDevice device;
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice lstGDs[] = ge.getScreenDevices();
+
+        ArrayList<GraphicsDevice> lstDevices = new ArrayList<>(lstGDs.length);
+
+        for (GraphicsDevice gd : lstGDs) {
+
+            GraphicsConfiguration gc = gd.getDefaultConfiguration();
+            Rectangle screenBounds = gc.getBounds();
+
+            if (screenBounds.contains(pos)) {
+                lstDevices.add(gd);
+            }
+        }
+
+        if (lstDevices.size() > 0) {
+            device = lstDevices.get(0);
+        } else {
+            device = ge.getDefaultScreenDevice();
+        }
+
+        return device;
     }
 }
