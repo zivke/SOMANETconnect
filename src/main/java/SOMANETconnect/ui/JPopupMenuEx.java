@@ -29,6 +29,7 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     public void addSeparator() {
         JSeparatorEx separator = new JSeparatorEx();
         Util.setColors(separator);
+        separator.addMouseListener(this);
         add(separator);
     }
 
