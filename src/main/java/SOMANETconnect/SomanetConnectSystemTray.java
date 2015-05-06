@@ -64,7 +64,7 @@ public class SomanetConnectSystemTray {
             }
             popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             // Fix the popup menu location according to its new size
-            popupMenu.setLocation(Util.getPopupMenuPosition(popupMenu, lastMouseClickPosition));
+            popupMenu.setLocation(lastMouseClickPosition);
         }
     }
 
@@ -141,7 +141,7 @@ public class SomanetConnectSystemTray {
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
                     lastMouseClickPosition = e.getPoint();
-                    popupMenu.setLocation(Util.getPopupMenuPosition(popupMenu, e.getPoint()));
+                    popupMenu.setLocation(e.getPoint());
                     popupMenu.setInvoker(popupMenu);
                     popupMenu.setVisible(true);
 
