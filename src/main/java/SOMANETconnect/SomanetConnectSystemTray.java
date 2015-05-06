@@ -181,6 +181,8 @@ public class SomanetConnectSystemTray {
         JLabel deviceTilesLabel;
         if (tileString.equalsIgnoreCase("in use")) {
             deviceTilesLabel = new JLabel("Device in use");
+        } else if (tileString.equalsIgnoreCase("none")) {
+            deviceTilesLabel = new JLabel("No device");
         } else {
             tileString = tileString.substring(5, tileString.length() - 1);
             int tileNumber = Integer.valueOf(tileString) + 1;
