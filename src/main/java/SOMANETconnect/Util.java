@@ -12,7 +12,6 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -167,10 +166,8 @@ public final class Util {
         return image;
     }
 
-    public static Point getPopupMenuPosition(JPopupMenu popupMenu, MouseEvent e) {
-        Rectangle bounds = getSafeScreenBounds(e.getPoint());
-
-        Point point = e.getPoint();
+    public static Point getPopupMenuPosition(JPopupMenu popupMenu, Point point) {
+        Rectangle bounds = getSafeScreenBounds(point);
 
         int x = point.x;
         int y = point.y;

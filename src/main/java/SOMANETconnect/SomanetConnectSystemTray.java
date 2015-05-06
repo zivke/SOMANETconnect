@@ -21,6 +21,7 @@ public class SomanetConnectSystemTray {
     private JPopupMenuEx popupMenu;
     private ArrayList<JComponent> currentDeviceMenuItems = new ArrayList<>();
     private JLabel oblacConnectionStatus;
+    private Point lastMouseClickPosition;
 
     /**
      * A worker class that finds all available devices and puts them into the popup menu
@@ -62,6 +63,8 @@ public class SomanetConnectSystemTray {
                 window.validate();
             }
             popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            // Fix the popup menu location according to its new size
+            popupMenu.setLocation(Util.getPopupMenuPosition(popupMenu, lastMouseClickPosition));
         }
     }
 
@@ -134,7 +137,8 @@ public class SomanetConnectSystemTray {
         trayIcon.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
-                    popupMenu.setLocation(Util.getPopupMenuPosition(popupMenu, e));
+                    lastMouseClickPosition = e.getPoint();
+                    popupMenu.setLocation(Util.getPopupMenuPosition(popupMenu, e.getPoint()));
                     popupMenu.setInvoker(popupMenu);
                     popupMenu.setVisible(true);
 
