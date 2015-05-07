@@ -1,6 +1,5 @@
 package SOMANETconnect.ui;
 
-import SOMANETconnect.Util;
 import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
@@ -48,7 +47,7 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     @Override
     public JMenuItem add(JMenuItem menuItem) {
         menuItem.addMouseListener(this);
-        Util.setColors(menuItem);
+        setColors(menuItem);
         menuItem.setMargin(new Insets(0, 10, 0, 0));
         return super.add(menuItem);
     }
@@ -57,27 +56,27 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     public JMenuItem add(String text) {
         JMenuItem menuItem = new JMenuItem(text);
         menuItem.addMouseListener(this);
-        Util.setColors(menuItem);
+        setColors(menuItem);
         menuItem.setMargin(new Insets(0, 10, 0, 0));
         return super.add(menuItem);
     }
 
     public JPanel add(JPanel panel) {
         panel.addMouseListener(this);
-        Util.setColors(panel);
+        setColors(panel);
         return (JPanel) super.add(panel);
     }
 
     public void insert(JMenuItem menuItem, int index) {
         menuItem.addMouseListener(this);
-        Util.setColors(menuItem);
+        setColors(menuItem);
         menuItem.setMargin(new Insets(0, 10, 0, 0));
         super.insert(menuItem, index);
     }
 
     public void insert(JPanel panel, int index) {
         panel.addMouseListener(this);
-        Util.setColors(panel);
+        setColors(panel);
         super.insert(panel, index);
     }
 
@@ -196,5 +195,20 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
         }
 
         return device;
+    }
+
+    private static void setColors(JComponent component) {
+        if (SystemUtils.IS_OS_LINUX) {
+            component.setBackground(new Color(0x67655e));
+            component.setForeground(Color.WHITE);
+            component.setOpaque(true);
+            if (component instanceof JPanel) {
+                for (Component innerComponent : component.getComponents()) {
+                    if (innerComponent instanceof JLabel) {
+                        innerComponent.setForeground(Color.WHITE);
+                    }
+                }
+            }
+        }
     }
 }

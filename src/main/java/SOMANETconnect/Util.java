@@ -10,8 +10,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -139,21 +137,6 @@ public final class Util {
             return true;
         }
         return false;
-    }
-
-    public static void setColors(JComponent component) {
-        if (SystemUtils.IS_OS_LINUX) {
-            component.setBackground(new Color(0x67655e));
-            component.setForeground(Color.WHITE);
-            component.setOpaque(true);
-            if (component instanceof JPanel) {
-                for (Component innerComponent : component.getComponents()) {
-                    if (innerComponent instanceof JLabel) {
-                        innerComponent.setForeground(Color.WHITE);
-                    }
-                }
-            }
-        }
     }
 
     public static BufferedImage getImageFromResource(String name) {
