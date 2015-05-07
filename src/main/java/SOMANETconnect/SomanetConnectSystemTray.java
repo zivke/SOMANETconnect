@@ -87,7 +87,9 @@ public class SomanetConnectSystemTray {
 
         // Set the OBLAC disconnected label as default
         oblacConnectionStatus.setText("DISCONNECTED");
-        oblacConnectionStatus.setForeground(Color.RED);
+        Font defaultFont = oblacConnectionStatus.getFont();
+        oblacConnectionStatus.setFont(defaultFont.deriveFont(Font.ITALIC | Font.BOLD));
+        oblacConnectionStatus.setForeground(new Color(0xdc0000));
     }
 
     private void initPopupMenu() {
@@ -203,6 +205,10 @@ public class SomanetConnectSystemTray {
         devicePanel.add(Box.createRigidArea(new Dimension(10, 0)));
         popupMenu.insert(devicePanel, currentDeviceMenuItems.size() + 2);
 
+        // Change the color of the "(Adapter:...)" label font
+        adapterIdLabel.setForeground(new Color(0xcccccc));
+        adapterIdLabel.setFont(adapterIdLabel.getFont().deriveFont(Font.ITALIC));
+
         currentDeviceMenuItems.add(devicePanel);
     }
 
@@ -237,11 +243,11 @@ public class SomanetConnectSystemTray {
         if (connected) {
             showInfo("OBLAC connected successfully");
             oblacConnectionStatus.setText("CONNECTED");
-            oblacConnectionStatus.setForeground(Color.GREEN);
+            oblacConnectionStatus.setForeground(new Color(0x9ade00));
         } else {
             showInfo("OBLAC disconnected");
             oblacConnectionStatus.setText("DISCONNECTED");
-            oblacConnectionStatus.setForeground(Color.RED);
+            oblacConnectionStatus.setForeground(new Color(0xdc0000));
         }
     }
 
