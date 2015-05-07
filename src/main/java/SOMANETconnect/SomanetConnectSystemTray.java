@@ -88,6 +88,10 @@ public class SomanetConnectSystemTray {
         // Set the OBLAC disconnected label as default
         oblacConnectionStatus.setText("DISCONNECTED");
         Font defaultFont = oblacConnectionStatus.getFont();
+        int fontStyle = Font.BOLD;
+        if (!SystemUtils.IS_OS_LINUX) {
+            fontStyle |= Font.ITALIC;
+        }
         oblacConnectionStatus.setFont(defaultFont.deriveFont(Font.ITALIC | Font.BOLD));
         oblacConnectionStatus.setForeground(new Color(0xdc0000));
     }
