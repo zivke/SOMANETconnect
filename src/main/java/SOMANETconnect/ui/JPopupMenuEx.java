@@ -33,13 +33,13 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
         add(separator);
         // Get the a two-tone separator by adding the top border and setting the separator background color
         if (SystemUtils.IS_OS_LINUX) {
-            separator.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(95, 94, 87)));
+            separator.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x5f5e57)));
             // To be able to set the background color, the opaque needs to be enabled, but that changes the background
             // color. Because of this, the background color is tuned to give the RGB values of 111, 108, 101 with the
             // opaque setting enabled
             separator.setBackground(new Color(15, 10, 0, 245));
         } else {
-            separator.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(204, 204, 204)));
+            separator.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0xcccccc)));
             separator.setBackground(Color.WHITE);
         }
         separator.setOpaque(true);
