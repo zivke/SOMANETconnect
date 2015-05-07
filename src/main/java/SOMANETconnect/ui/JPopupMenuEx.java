@@ -67,13 +67,6 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
         return (JPanel) super.add(panel);
     }
 
-    public void insert(JMenuItem menuItem, int index) {
-        menuItem.addMouseListener(this);
-        setColors(menuItem);
-        menuItem.setMargin(new Insets(0, -3, 0, 0));
-        super.insert(menuItem, index);
-    }
-
     public void insert(JPanel panel, int index) {
         panel.addMouseListener(this);
         setColors(panel);
