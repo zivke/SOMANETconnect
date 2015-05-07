@@ -206,8 +206,7 @@ public class SomanetConnectSystemTray {
         popupMenu.insert(devicePanel, currentDeviceMenuItems.size() + 2);
 
         // Change the color of the "(Adapter:...)" label font
-        adapterIdLabel.setForeground(new Color(0xcccccc));
-        adapterIdLabel.setFont(adapterIdLabel.getFont().deriveFont(Font.ITALIC));
+        setSecondaryLabelLook(adapterIdLabel);
 
         currentDeviceMenuItems.add(devicePanel);
     }
@@ -261,5 +260,14 @@ public class SomanetConnectSystemTray {
         }
         Dimension trayIconSize = SystemTray.getSystemTray().getTrayIconSize();
         return bufferedImage.getScaledInstance(trayIconSize.width - 2, trayIconSize.height, Image.SCALE_SMOOTH);
+    }
+
+    private void setSecondaryLabelLook(JLabel label) {
+        if (SystemUtils.IS_OS_LINUX) {
+            label.setForeground(new Color(0xcccccc));
+        } else {
+            label.setForeground(new Color(0x777777));
+        }
+        label.setFont(label.getFont().deriveFont(Font.ITALIC));
     }
 }
