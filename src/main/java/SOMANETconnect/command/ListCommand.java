@@ -20,7 +20,9 @@ public class ListCommand extends SystemProcess {
 
     public static List<String> prepareCommand() {
         ArrayList<String> command = new ArrayList<>();
-        command.add(System.getProperty("user.dir") + "/bin/xflash");
+        // Use the xrun command instead of xflash because of the bug in XMOS tools (starting from version 13.2.0) where
+        // xflash always returns 1 instead of 0
+        command.add(System.getProperty("user.dir") + "/bin/xrun");
         command.add("-l");
         return command;
     }
