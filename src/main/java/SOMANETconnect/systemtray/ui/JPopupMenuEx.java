@@ -1,4 +1,4 @@
-package SOMANETconnect.ui;
+package SOMANETconnect.systemtray.ui;
 
 import org.apache.commons.lang3.SystemUtils;
 

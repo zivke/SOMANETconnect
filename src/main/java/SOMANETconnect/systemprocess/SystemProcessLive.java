@@ -1,5 +1,7 @@
-package SOMANETconnect;
+package SOMANETconnect.systemprocess;
 
+import SOMANETconnect.miscellaneous.Constants;
+import SOMANETconnect.miscellaneous.Util;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 

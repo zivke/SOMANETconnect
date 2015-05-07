@@ -1,6 +1,10 @@
-package SOMANETconnect;
+package SOMANETconnect.websocketadapter;
 
+import SOMANETconnect.XscopeSocket;
 import SOMANETconnect.command.ListCommand;
+import SOMANETconnect.miscellaneous.Constants;
+import SOMANETconnect.miscellaneous.Util;
+import SOMANETconnect.systemprocess.SystemProcess;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;

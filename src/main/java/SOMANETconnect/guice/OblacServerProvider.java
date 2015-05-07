@@ -1,6 +1,6 @@
 package SOMANETconnect.guice;
 
-import SOMANETconnect.OblacWebSocketAdapter;
+import SOMANETconnect.websocketadapter.OblacWebSocketAdapter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.apache.commons.configuration.Configuration;

@@ -1,6 +1,8 @@
 package SOMANETconnect;
 
 import SOMANETconnect.guice.MyModule;
+import SOMANETconnect.systemprocess.SystemProcessLive;
+import SOMANETconnect.systemtray.SomanetConnectSystemTray;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;

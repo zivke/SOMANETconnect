@@ -1,5 +1,7 @@
-package SOMANETconnect;
+package SOMANETconnect.miscellaneous;
 
+import SOMANETconnect.SomanetConnect;
+import SOMANETconnect.systemprocess.SystemProcess;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT;

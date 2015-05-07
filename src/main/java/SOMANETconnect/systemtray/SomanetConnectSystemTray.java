@@ -1,7 +1,9 @@
-package SOMANETconnect;
+package SOMANETconnect.systemtray;
 
 import SOMANETconnect.command.ListCommand;
-import SOMANETconnect.ui.JPopupMenuEx;
+import SOMANETconnect.miscellaneous.Constants;
+import SOMANETconnect.miscellaneous.Util;
+import SOMANETconnect.systemtray.ui.JPopupMenuEx;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 

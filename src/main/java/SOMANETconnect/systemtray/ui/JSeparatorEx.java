@@ -1,4 +1,4 @@
-package SOMANETconnect.ui;
+package SOMANETconnect.systemtray.ui;
 
 import javax.swing.*;
 import java.awt.*;

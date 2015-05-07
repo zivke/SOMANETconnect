@@ -1,4 +1,4 @@
-package SOMANETconnect;
+package SOMANETconnect.miscellaneous;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

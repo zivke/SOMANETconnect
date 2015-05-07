@@ -1,5 +1,6 @@
-package SOMANETconnect;
+package SOMANETconnect.systemprocess;
 
+import SOMANETconnect.miscellaneous.Constants;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;

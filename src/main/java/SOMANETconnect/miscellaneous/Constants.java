@@ -1,4 +1,4 @@
-package SOMANETconnect;
+package SOMANETconnect.miscellaneous;
 
 import org.apache.commons.lang3.SystemUtils;
 

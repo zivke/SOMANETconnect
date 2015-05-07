@@ -1,6 +1,6 @@
 package SOMANETconnect.guice;
 
-import SOMANETconnect.MotorTuningWebSocketAdapter;
+import SOMANETconnect.websocketadapter.MotorTuningWebSocketAdapter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.apache.commons.configuration.Configuration;

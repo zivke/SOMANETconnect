@@ -1,7 +1,7 @@
 package SOMANETconnect.command;
 
-import SOMANETconnect.Constants;
-import SOMANETconnect.SystemProcess;
+import SOMANETconnect.miscellaneous.Constants;
+import SOMANETconnect.systemprocess.SystemProcess;
 
 import java.io.IOException;
 import java.util.ArrayList;
