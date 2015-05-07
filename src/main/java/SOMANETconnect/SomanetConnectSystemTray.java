@@ -97,9 +97,10 @@ public class SomanetConnectSystemTray {
 
         popupMenu.add(setupOblacStatusPanel());
         popupMenu.addSeparator();
-        JMenuItem loadingMenuItem = new JMenuItem("Loading...");
-        popupMenu.add(loadingMenuItem);
-        currentDeviceMenuItems.add(loadingMenuItem);
+        JPanel loadingPanel = createLoadingPanel();
+        popupMenu.add(loadingPanel);
+        popupMenu.pack();
+        currentDeviceMenuItems.add(loadingPanel);
         popupMenu.addSeparator();
 
         JCheckBoxMenuItem startOnBootItem = new JCheckBoxMenuItem("Start on boot");
@@ -224,10 +225,10 @@ public class SomanetConnectSystemTray {
     private void showLoading() {
         clearDeviceList();
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        JMenuItem loadingMenuItem = new JMenuItem("Loading...");
-        popupMenu.insert(loadingMenuItem, 2);
+        JPanel loadingPanel = createLoadingPanel();
+        popupMenu.insert(loadingPanel, 2);
         popupMenu.pack();
-        currentDeviceMenuItems.add(loadingMenuItem);
+        currentDeviceMenuItems.add(loadingPanel);
     }
 
     public void showError(String message) {
@@ -269,5 +270,13 @@ public class SomanetConnectSystemTray {
             label.setForeground(new Color(0x777777));
         }
         label.setFont(label.getFont().deriveFont(Font.ITALIC));
+    }
+
+    private JPanel createLoadingPanel() {
+        JPanel loadingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        loadingPanel.add(Box.createRigidArea(new Dimension(23, 0)));
+        JLabel loadingLabel = new JLabel("Loading...");
+        loadingPanel.add(loadingLabel);
+        return loadingPanel;
     }
 }
