@@ -86,14 +86,7 @@ public class SomanetConnectSystemTray {
         initTrayIcon();
 
         // Set the OBLAC disconnected label as default
-        oblacConnectionStatus.setText("DISCONNECTED");
-        Font defaultFont = oblacConnectionStatus.getFont();
-        int fontStyle = Font.BOLD;
-        if (!SystemUtils.IS_OS_LINUX) {
-            fontStyle |= Font.ITALIC;
-        }
-        oblacConnectionStatus.setFont(defaultFont.deriveFont(Font.ITALIC | Font.BOLD));
-        oblacConnectionStatus.setForeground(new Color(0xdc0000));
+        setDefaultOblacStatusLabel();
     }
 
     private void initPopupMenu() {
@@ -245,6 +238,18 @@ public class SomanetConnectSystemTray {
 
     public void showInfo(String message) {
         trayIcon.displayMessage("Info", message, MessageType.INFO);
+    }
+
+    private void setDefaultOblacStatusLabel() {
+        oblacConnectionStatus.setText("DISCONNECTED");
+        Font defaultFont = oblacConnectionStatus.getFont();
+        int fontStyle = Font.BOLD;
+        // Do not use italic font in Linux because of bad font anti-aliasing
+        if (!SystemUtils.IS_OS_LINUX) {
+            fontStyle |= Font.ITALIC;
+        }
+        oblacConnectionStatus.setFont(defaultFont.deriveFont(fontStyle));
+        oblacConnectionStatus.setForeground(new Color(0xdc0000));
     }
 
     public void oblacConnected(boolean connected) {
