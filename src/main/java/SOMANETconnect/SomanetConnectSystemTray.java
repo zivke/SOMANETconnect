@@ -171,7 +171,7 @@ public class SomanetConnectSystemTray {
         JPanel oblacPanel = new JPanel();
         oblacPanel.setLayout(new BoxLayout(oblacPanel, BoxLayout.X_AXIS));
         // Add a left "margin" and set the default height of the panel
-        oblacPanel.add(Box.createRigidArea(new Dimension(10, 25)));
+        oblacPanel.add(Box.createRigidArea(new Dimension(4, 25)));
         JLabel oblacLabel = new JLabel("OBLAC IDE", oblacIcon, SwingConstants.LEFT);
         oblacConnectionStatus = new JLabel("DISCONNECTED");
         oblacPanel.add(oblacLabel);
@@ -187,7 +187,7 @@ public class SomanetConnectSystemTray {
         JPanel devicePanel = new JPanel();
         devicePanel.setLayout(new BoxLayout(devicePanel, BoxLayout.X_AXIS));
         // Add a left "margin" and set the default height of the panel
-        devicePanel.add(Box.createRigidArea(new Dimension(34, 25)));
+        devicePanel.add(Box.createRigidArea(new Dimension(21, 25)));
         JLabel deviceTilesLabel;
         if (tileString.equalsIgnoreCase("in use")) {
             deviceTilesLabel = new JLabel("Device in use");
@@ -274,7 +274,7 @@ public class SomanetConnectSystemTray {
 
     private JPanel createLoadingPanel() {
         JPanel loadingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        loadingPanel.add(Box.createRigidArea(new Dimension(23, 0)));
+        loadingPanel.add(Box.createRigidArea(new Dimension(22, 0)));
         JLabel loadingLabel = new JLabel("Loading...");
         loadingPanel.add(loadingLabel);
         return loadingPanel;

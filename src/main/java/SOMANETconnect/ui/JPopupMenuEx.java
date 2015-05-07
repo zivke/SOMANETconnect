@@ -48,7 +48,7 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     public JMenuItem add(JMenuItem menuItem) {
         menuItem.addMouseListener(this);
         setColors(menuItem);
-        menuItem.setMargin(new Insets(0, 10, 0, 0));
+        menuItem.setMargin(new Insets(0, -3, 0, 0));
         return super.add(menuItem);
     }
 
@@ -57,7 +57,7 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
         JMenuItem menuItem = new JMenuItem(text);
         menuItem.addMouseListener(this);
         setColors(menuItem);
-        menuItem.setMargin(new Insets(0, 10, 0, 0));
+        menuItem.setMargin(new Insets(0, -3, 0, 0));
         return super.add(menuItem);
     }
 
@@ -70,7 +70,7 @@ public class JPopupMenuEx extends JPopupMenu implements MouseListener {
     public void insert(JMenuItem menuItem, int index) {
         menuItem.addMouseListener(this);
         setColors(menuItem);
-        menuItem.setMargin(new Insets(0, 10, 0, 0));
+        menuItem.setMargin(new Insets(0, -3, 0, 0));
         super.insert(menuItem, index);
     }
 
