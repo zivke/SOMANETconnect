@@ -187,7 +187,11 @@ public class SomanetConnectSystemTray {
         JPanel devicePanel = new JPanel();
         devicePanel.setLayout(new BoxLayout(devicePanel, BoxLayout.X_AXIS));
         // Add a left "margin" and set the default height of the panel
-        devicePanel.add(Box.createRigidArea(new Dimension(21, 25)));
+        if (SystemUtils.IS_OS_LINUX) {
+            devicePanel.add(Box.createRigidArea(new Dimension(21, 25)));
+        } else {
+            devicePanel.add(Box.createRigidArea(new Dimension(28, 25)));
+        }
         JLabel deviceTilesLabel;
         if (tileString.equalsIgnoreCase("in use")) {
             deviceTilesLabel = new JLabel("Device in use");
