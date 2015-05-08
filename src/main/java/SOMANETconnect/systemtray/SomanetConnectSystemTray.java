@@ -71,11 +71,7 @@ public class SomanetConnectSystemTray {
     }
 
     public SomanetConnectSystemTray() {
-        //Check the SystemTray is supported
-        if (!SystemTray.isSupported()) {
-            logger.error("SystemTray is not supported");
-            return;
-        }
+        assertSystemTrayAvailable();
 
         // Set the default styling of the application to match that of the system's
         try {
@@ -293,5 +289,28 @@ public class SomanetConnectSystemTray {
         JLabel loadingLabel = new JLabel("Loading...");
         loadingPanel.add(loadingLabel);
         return loadingPanel;
+    }
+
+    /**
+     * Check if SystemTray is available several times, because it is possible that it has not yet been initialized after
+     * system boot. If SystemTray is not available after multiple checks, assume that it is not supported, show an error
+     * message and exit the application.
+     */
+    private static void assertSystemTrayAvailable() {
+        boolean systemTraySupported = SystemTray.isSupported();
+        for (int i = 0; !systemTraySupported && i < 10; i++) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // NO-OP
+            }
+        }
+
+        if (!systemTraySupported) {
+            JOptionPane.showMessageDialog(null, "SystemTray is not supported. SOMANETconnect will now exit.",
+                    "SOMANETconnect", JOptionPane.ERROR_MESSAGE);
+            logger.fatal("SystemTray is not supported");
+            System.exit(1);
+        }
     }
 }
