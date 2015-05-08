@@ -285,7 +285,11 @@ public class SomanetConnectSystemTray {
 
     private JPanel createLoadingPanel() {
         JPanel loadingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        loadingPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        if (SystemUtils.IS_OS_LINUX) {
+            loadingPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        } else {
+            loadingPanel.add(Box.createRigidArea(new Dimension(17, 0)));
+        }
         JLabel loadingLabel = new JLabel("Loading...");
         loadingPanel.add(loadingLabel);
         return loadingPanel;
