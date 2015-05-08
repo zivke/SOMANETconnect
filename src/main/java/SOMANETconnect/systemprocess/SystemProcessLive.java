@@ -31,9 +31,9 @@ public class SystemProcessLive implements Runnable {
         public void run() {
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line;
-                while ((line = readLineWithTerm(br)) != null) {
-                    Util.sendWebSocketResultResponse(remoteEndpoint, line, requestId);
+                String segment;
+                while ((segment = readLineWithTermAndLimit(br)) != null) {
+                    Util.sendWebSocketResultResponse(remoteEndpoint, segment, requestId);
                 }
             } catch (IOException e) {
                 logger.error(e.getMessage());
@@ -90,23 +90,26 @@ public class SystemProcessLive implements Runnable {
         activeRequestRegister.remove(requestId);
     }
 
-    private static String readLineWithTerm(BufferedReader reader) throws IOException {
+    private static String readLineWithTermAndLimit(BufferedReader reader) throws IOException {
         int code;
-        StringBuilder line = new StringBuilder();
+        StringBuilder segment = new StringBuilder();
 
+        int counter = 0;
         while ((code = reader.read()) != -1) {
             char ch = (char) code;
 
-            line.append(ch);
+            segment.append(ch);
 
-            if (ch == '\n') {
+            if (++counter > 25) {
+                break;
+            } else if (ch == '\n') {
                 break;
             } else if (ch == '\r') {
                 reader.mark(1);
                 ch = (char) reader.read();
 
                 if (ch == '\n') {
-                    line.append(ch);
+                    segment.append(ch);
                 } else {
                     reader.reset();
                 }
@@ -115,6 +118,6 @@ public class SystemProcessLive implements Runnable {
             }
         }
 
-        return (line.length() == 0 ? null : line.toString());
+        return (segment.length() == 0 ? null : segment.toString());
     }
 }
