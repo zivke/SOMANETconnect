@@ -305,6 +305,7 @@ public class SomanetConnectSystemTray {
         for (int i = 0; !systemTraySupported && i < 10; i++) {
             try {
                 Thread.sleep(1000);
+                systemTraySupported = SystemTray.isSupported();
             } catch (InterruptedException e) {
                 // NO-OP
             }
