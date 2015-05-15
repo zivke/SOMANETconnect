@@ -252,11 +252,9 @@ public class SomanetConnectSystemTray {
 
     public void oblacConnected(boolean connected) {
         if (connected) {
-            showInfo("OBLAC connected successfully");
             oblacConnectionStatus.setText("CONNECTED");
             oblacConnectionStatus.setForeground(new Color(0x9ade00));
         } else {
-            showInfo("OBLAC disconnected");
             oblacConnectionStatus.setText("DISCONNECTED");
             oblacConnectionStatus.setForeground(new Color(0xdc0000));
         }
