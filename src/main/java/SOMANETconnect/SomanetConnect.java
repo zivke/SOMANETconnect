@@ -1,12 +1,8 @@
 package SOMANETconnect;
 
-import SOMANETconnect.guice.MyModule;
+import SOMANETconnect.miscellaneous.SomanetConnectServerFactory;
 import SOMANETconnect.systemprocess.SystemProcessLive;
 import SOMANETconnect.systemtray.SomanetConnectSystemTray;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.MultiException;
@@ -21,9 +17,8 @@ public class SomanetConnect {
         // Initialize the SomanetConnectSystemTray singleton
         SomanetConnectSystemTray.getInstance();
 
-        Injector injector = Guice.createInjector(new MyModule());
-        Server oblacServer = injector.getInstance(Key.get(Server.class, Names.named("OBLAC")));
-        Server motorTuningServer = injector.getInstance(Key.get(Server.class, Names.named("MotorTuning")));
+        Server oblacServer = SomanetConnectServerFactory.createOblacServer();
+        Server motorTuningServer = SomanetConnectServerFactory.createMotorTuningServer();
 
         try {
             oblacServer.start();
