@@ -29,8 +29,9 @@ public class SystemProcess {
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader br = new BufferedReader(isr);
                 String line;
-                while ((line = readLineWithTerm(br)) != null)
+                while ((line = readLineWithTerm(br)) != null) {
                     output += line;
+                }
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -38,6 +39,34 @@ public class SystemProcess {
 
         public String getOutput() {
             return output;
+        }
+
+        private String readLineWithTerm(BufferedReader reader) throws IOException {
+            int code;
+            StringBuilder line = new StringBuilder();
+
+            while ((code = reader.read()) != -1) {
+                char ch = (char) code;
+
+                line.append(ch);
+
+                if (ch == '\n') {
+                    break;
+                } else if (ch == '\r') {
+                    reader.mark(1);
+                    ch = (char) reader.read();
+
+                    if (ch == '\n') {
+                        line.append(ch);
+                    } else {
+                        reader.reset();
+                    }
+
+                    break;
+                }
+            }
+
+            return (line.length() == 0 ? null : line.toString());
         }
     }
 
@@ -50,6 +79,10 @@ public class SystemProcess {
     public SystemProcess(List<String> command) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder().command(command);
         processBuilder.environment().putAll(Constants.environmentVariables);
+
+        // Prevent more than one process from initializing at once
+        SystemProcessLock.getInstance().lock();
+
         Process process;
         try {
             process = processBuilder.start();
@@ -69,6 +102,8 @@ public class SystemProcess {
             // NO-OP
         }
 
+        SystemProcessLock.getInstance().unlock();
+
         output = outputReader.getOutput();
         error = errorReader.getOutput();
     }
@@ -83,33 +118,5 @@ public class SystemProcess {
 
     public String getError() {
         return error;
-    }
-
-    private static String readLineWithTerm(BufferedReader reader) throws IOException {
-        int code;
-        StringBuilder line = new StringBuilder();
-
-        while ((code = reader.read()) != -1) {
-            char ch = (char) code;
-
-            line.append(ch);
-
-            if (ch == '\n') {
-                break;
-            } else if (ch == '\r') {
-                reader.mark(1);
-                ch = (char) reader.read();
-
-                if (ch == '\n') {
-                    line.append(ch);
-                } else {
-                    reader.reset();
-                }
-
-                break;
-            }
-        }
-
-        return (line.length() == 0 ? null : line.toString());
     }
 }

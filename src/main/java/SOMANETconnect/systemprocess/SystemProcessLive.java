@@ -7,7 +7,6 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
@@ -20,35 +19,13 @@ public class SystemProcessLive implements Runnable {
 
     private static final Logger logger = Logger.getLogger(SystemProcessLive.class.getName());
 
-    class StreamReader extends Thread {
-        InputStream is;
-
-        // Reads everything from the input stream until it is empty
-        StreamReader(InputStream is) {
-            this.is = is;
-        }
-
-        public void run() {
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String segment;
-                while ((segment = readLineWithTermAndLimit(br)) != null) {
-                    Util.sendWebSocketResultResponse(remoteEndpoint, segment, requestId);
-                }
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        }
-    }
-
     private List<String> command;
     private String requestId;
     private Map<String, Process> activeRequestRegister;
     private RemoteEndpoint remoteEndpoint;
 
-    public SystemProcessLive(
-            List<String> command, Map<String, Process> activeRequestRegister, String requestId, RemoteEndpoint remoteEndpoint)
-            throws IOException {
+    public SystemProcessLive(List<String> command, Map<String, Process> activeRequestRegister, String requestId,
+                             RemoteEndpoint remoteEndpoint) throws IOException {
         this.command = command;
         this.requestId = requestId;
         this.activeRequestRegister = activeRequestRegister;
@@ -59,6 +36,10 @@ public class SystemProcessLive implements Runnable {
     public void run() {
         ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true);
         processBuilder.environment().putAll(Constants.environmentVariables);
+
+        // Prevent more than one process from initializing at once
+        SystemProcessLock.getInstance().lock();
+
         Process process;
         try {
             process = processBuilder.start();
@@ -75,14 +56,32 @@ public class SystemProcessLive implements Runnable {
             return;
         }
 
-
-        StreamReader outputReader = new StreamReader(process.getInputStream());
-        outputReader.start();
+        boolean unlocked = false;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String segment;
+            while ((segment = readLineWithTermAndLimit(br)) != null) {
+                // Unlock the SystemProcessLock only once, when the process starts its output, which means that it has
+                // finished its initialization
+                if (!unlocked) {
+                    unlocked = true;
+                    SystemProcessLock.getInstance().unlock();
+                }
+                Util.sendWebSocketResultResponse(remoteEndpoint, segment, requestId);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
 
         try {
             process.waitFor();
         } catch (InterruptedException e) {
             // NO-OP
+        }
+
+        // In case that the started process didn't have any output, release the lock once it finishes
+        if (!unlocked) {
+            SystemProcessLock.getInstance().unlock();
         }
 
         Util.sendWebSocketResultResponse(remoteEndpoint, Constants.EXEC_DONE, requestId);
