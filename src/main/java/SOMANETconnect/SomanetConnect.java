@@ -16,9 +16,11 @@ import java.net.BindException;
 public class SomanetConnect {
 
     private static final Logger logger = Logger.getLogger(SystemProcessLive.class.getName());
-    public static SomanetConnectSystemTray somanetConnectSystemTray = new SomanetConnectSystemTray();
 
     public static void main(String[] args) throws Exception {
+        // Initialize the SomanetConnectSystemTray singleton
+        SomanetConnectSystemTray.getInstance();
+
         Injector injector = Guice.createInjector(new MyModule());
         Server oblacServer = injector.getInstance(Key.get(Server.class, Names.named("OBLAC")));
         Server motorTuningServer = injector.getInstance(Key.get(Server.class, Names.named("MotorTuning")));
@@ -34,9 +36,9 @@ public class SomanetConnect {
                 for (Throwable nestedThrowable : ((MultiException) t).getThrowables()) {
                     if (nestedThrowable instanceof BindException) {
                         if (nestedThrowable.getMessage().equalsIgnoreCase("Address already in use")) {
-                            somanetConnectSystemTray.showError("The port needed for SOMANETconnect to run properly " +
-                                    "is currently occupied. Make sure that there isn't another instance of " +
-                                    "SOMANETconnect already running and try again.");
+                            SomanetConnectSystemTray.getInstance().showError("The port needed for SOMANETconnect to " +
+                                    "run properly is currently occupied. Make sure that there isn't another instance " +
+                                    "of SOMANETconnect already running and try again.");
                         }
                         break;
                     }

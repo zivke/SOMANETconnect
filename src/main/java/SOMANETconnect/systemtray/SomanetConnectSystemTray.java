@@ -19,6 +19,9 @@ import java.util.Map;
 public class SomanetConnectSystemTray {
     private static final Logger logger = Logger.getLogger(SomanetConnectSystemTray.class.getName());
 
+    // Singleton
+    private static SomanetConnectSystemTray somanetConnectSystemTray = new SomanetConnectSystemTray();
+
     private TrayIcon trayIcon;
     private JPopupMenuEx popupMenu;
     private ArrayList<JComponent> currentDeviceMenuItems = new ArrayList<>();
@@ -70,7 +73,7 @@ public class SomanetConnectSystemTray {
         }
     }
 
-    public SomanetConnectSystemTray() {
+    private SomanetConnectSystemTray() {
         assertSystemTrayAvailable();
 
         // Set the default styling of the application to match that of the system's
@@ -85,6 +88,10 @@ public class SomanetConnectSystemTray {
 
         // Set the OBLAC disconnected label as default
         setDefaultOblacStatusLabel();
+    }
+
+    public static SomanetConnectSystemTray getInstance() {
+        return somanetConnectSystemTray;
     }
 
     private void initPopupMenu() {

@@ -1,10 +1,10 @@
 package SOMANETconnect.websocketadapter;
 
-import SOMANETconnect.SomanetConnect;
 import SOMANETconnect.command.ListCommand;
 import SOMANETconnect.miscellaneous.Constants;
 import SOMANETconnect.miscellaneous.Util;
 import SOMANETconnect.systemprocess.SystemProcessLive;
+import SOMANETconnect.systemtray.SomanetConnectSystemTray;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
@@ -34,7 +34,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
         getSession().getPolicy().setMaxTextMessageSize(10 * MB);
         getSession().setIdleTimeout(-1);
         logger.info("Socket connected to " + session.getRemoteAddress());
-        SomanetConnect.somanetConnectSystemTray.oblacConnected(true);
+        SomanetConnectSystemTray.getInstance().oblacConnected(true);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
         logger.info("Socket Closed: [" + statusCode + "] " + reason);
-        SomanetConnect.somanetConnectSystemTray.oblacConnected(false);
+        SomanetConnectSystemTray.getInstance().oblacConnected(false);
     }
 
     @Override
