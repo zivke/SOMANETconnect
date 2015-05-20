@@ -1,6 +1,6 @@
 package SOMANETconnect.websocketadapter;
 
-import SOMANETconnect.command.ListCommand;
+import SOMANETconnect.DeviceManager;
 import SOMANETconnect.miscellaneous.Constants;
 import SOMANETconnect.miscellaneous.Util;
 import SOMANETconnect.systemprocess.SystemProcessLive;
@@ -17,12 +17,9 @@ import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class OblacWebSocketAdapter extends WebSocketAdapter {
+public class OblacWebSocketAdapter extends WebSocketAdapter implements Observer {
     private static final int MB = 1024 * 1024;
     private final static Logger logger = Logger.getLogger(OblacWebSocketAdapter.class.getName());
 
@@ -54,8 +51,8 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
         try {
             switch (request.getMethod()) {
                 case Constants.LIST:
-                    ListCommand listCommand = new ListCommand();
-                    Util.sendWebSocketResultResponse(getRemote(), listCommand.getDeviceList(), request.getID());
+                    Util.sendWebSocketResultResponse(
+                            getRemote(), DeviceManager.getInstance().getDevices(), request.getID());
                     break;
                 case Constants.FLASH:
                     flash(request);
@@ -123,5 +120,12 @@ public class OblacWebSocketAdapter extends WebSocketAdapter {
         command.add(deviceId);
         command.add(runFilePath.toString());
         (new Thread(new SystemProcessLive(command, activeRequestRegister, requestId, getRemote()))).start();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof DeviceManager && getRemote() != null) {
+            Util.sendWebSocketResultResponse(getRemote(), ((DeviceManager) o).getDevices(), null);
+        }
     }
 }

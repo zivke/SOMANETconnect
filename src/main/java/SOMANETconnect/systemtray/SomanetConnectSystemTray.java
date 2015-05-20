@@ -1,6 +1,6 @@
 package SOMANETconnect.systemtray;
 
-import SOMANETconnect.command.ListCommand;
+import SOMANETconnect.DeviceManager;
 import SOMANETconnect.miscellaneous.Constants;
 import SOMANETconnect.miscellaneous.Util;
 import SOMANETconnect.systemtray.ui.JPopupMenuEx;
@@ -15,16 +15,19 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
-public class SomanetConnectSystemTray {
-    private static final Logger logger = Logger.getLogger(SomanetConnectSystemTray.class.getName());
-
-    // Singleton
+// Singleton
+public class SomanetConnectSystemTray implements Observer {
     private static SomanetConnectSystemTray somanetConnectSystemTray = new SomanetConnectSystemTray();
+
+    private static final Logger logger = Logger.getLogger(SomanetConnectSystemTray.class.getName());
 
     private TrayIcon trayIcon;
     private JPopupMenuEx popupMenu;
     private ArrayList<JComponent> currentDeviceMenuItems = new ArrayList<>();
+    private java.util.List<Map<String, String>> devices;
     private JLabel oblacConnectionStatus;
     private Point lastMouseClickPosition;
 
@@ -36,15 +39,6 @@ public class SomanetConnectSystemTray {
         public void run() {
             showLoading();
 
-            ListCommand listCommand;
-            try {
-                listCommand = new ListCommand();
-            } catch (IOException e2) {
-                logger.error(e2.getMessage());
-                return;
-            }
-
-            java.util.List devices = listCommand.getDeviceList();
             clearDeviceList();
 
             if (devices.isEmpty()) {
@@ -55,21 +49,23 @@ public class SomanetConnectSystemTray {
 
                 currentDeviceMenuItems.add(devicePanel);
             } else {
-                for (Object deviceObject : devices) {
-                    Map device = (Map) deviceObject;
+                for (Map<String, String> device : devices) {
                     addDeviceToList(device);
                 }
             }
-            // Resize the ancestor window of the popup menu to the required size. The popupMenu.pack() is not used
-            // because it causes the popup menu to flicker.
-            Window window = SwingUtilities.getWindowAncestor(popupMenu);
-            if (window != null) {
-                window.pack();
-                window.validate();
+
+            if (popupMenu.isVisible()) {
+                // Resize the ancestor window of the popup menu to the required size. The popupMenu.pack() is not used
+                // because it causes the popup menu to flicker.
+                Window window = SwingUtilities.getWindowAncestor(popupMenu);
+                if (window != null) {
+                    window.pack();
+                    window.validate();
+                }
+                // Fix the popup menu location according to its new size
+                popupMenu.setLocation(lastMouseClickPosition);
             }
             popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            // Fix the popup menu location according to its new size
-            popupMenu.setLocation(lastMouseClickPosition);
         }
     }
 
@@ -151,7 +147,7 @@ public class SomanetConnectSystemTray {
                     popupMenu.setVisible(true);
 
                     // Run the listing process in a separate thread, so that the context menu doesn't lag
-                    (new Thread(new Worker())).start();
+//                    (new Thread(new Worker())).start();
                 }
             }
         });
@@ -184,8 +180,8 @@ public class SomanetConnectSystemTray {
         return oblacPanel;
     }
 
-    private void addDeviceToList(Map device) {
-        String tileString = (String) device.get(Constants.DEVICES);
+    private void addDeviceToList(Map<String, String> device) {
+        String tileString = device.get(Constants.DEVICES);
         JPanel devicePanel = new JPanel();
         devicePanel.setLayout(new BoxLayout(devicePanel, BoxLayout.X_AXIS));
         // Add a left "margin" and set the default height of the panel
@@ -321,6 +317,14 @@ public class SomanetConnectSystemTray {
                     "SOMANETconnect", JOptionPane.ERROR_MESSAGE);
             logger.fatal("SystemTray is not supported");
             System.exit(1);
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof DeviceManager) {
+            devices = ((DeviceManager) o).getDevices();
+            (new Thread(new Worker())).start();
         }
     }
 }

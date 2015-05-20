@@ -1,12 +1,11 @@
 package SOMANETconnect.miscellaneous;
 
-import SOMANETconnect.websocketadapter.MotorTuningWebSocketAdapter;
-import SOMANETconnect.websocketadapter.OblacWebSocketAdapter;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.security.cert.CertificateException;
 public class SomanetConnectServerFactory {
     private static final Logger logger = Logger.getLogger(SomanetConnectServerFactory.class.getName());
 
-    public static Server createOblacServer() {
+    public static Server createOblacServer(final WebSocketCreator creator) {
         Server server = new Server();
 
         // Normal web socket connection (ws)
@@ -59,7 +58,7 @@ public class SomanetConnectServerFactory {
         context.setHandler(new WebSocketHandler() {
             @Override
             public void configure(WebSocketServletFactory webSocketServletFactory) {
-                webSocketServletFactory.register(OblacWebSocketAdapter.class);
+                webSocketServletFactory.setCreator(creator);
             }
         });
         server.setHandler(context);
@@ -67,7 +66,7 @@ public class SomanetConnectServerFactory {
         return server;
     }
 
-    public static Server createMotorTuningServer() {
+    public static Server createMotorTuningServer(final WebSocketCreator creator) {
         Server server = new Server();
 
         // Secure (SSL) web socket connection (wss)
@@ -103,7 +102,7 @@ public class SomanetConnectServerFactory {
         context.setHandler(new WebSocketHandler() {
             @Override
             public void configure(WebSocketServletFactory webSocketServletFactory) {
-                webSocketServletFactory.register(MotorTuningWebSocketAdapter.class);
+                webSocketServletFactory.setCreator(creator);
             }
         });
         server.setHandler(context);

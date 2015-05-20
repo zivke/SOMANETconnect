@@ -1,7 +1,7 @@
 package SOMANETconnect.websocketadapter;
 
+import SOMANETconnect.DeviceManager;
 import SOMANETconnect.XscopeSocket;
-import SOMANETconnect.command.ListCommand;
 import SOMANETconnect.miscellaneous.Constants;
 import SOMANETconnect.miscellaneous.Util;
 import SOMANETconnect.systemprocess.SystemProcess;
@@ -16,8 +16,10 @@ import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
+public class MotorTuningWebSocketAdapter extends WebSocketAdapter implements Observer {
     private static final int MB = 1024 * 1024;
     private static final String MOTOR_CONTROL_ATTR = "motor_control";
     private static final String ID_ATTR = "id";
@@ -61,8 +63,8 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                     xscopeSocket.close();
                     break;
                 case Constants.LIST:
-                    ListCommand listCommand = new ListCommand();
-                    Util.sendWebSocketResultResponse(getRemote(), listCommand.getDeviceList(), request.getID());
+                    Util.sendWebSocketResultResponse(
+                            getRemote(), DeviceManager.getInstance().getDevices(), request.getID());
                     break;
                 case Constants.SEND:
                     String motorControlParams = (String) request.getNamedParams().get(MOTOR_CONTROL_ATTR);
@@ -157,5 +159,12 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter {
                 throw new IOException("Unknown device type: " + deviceType);
         }
         return new SystemProcess(command);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof DeviceManager && getRemote() != null) {
+            Util.sendWebSocketResultResponse(getRemote(), ((DeviceManager) o).getDevices(), null);
+        }
     }
 }
