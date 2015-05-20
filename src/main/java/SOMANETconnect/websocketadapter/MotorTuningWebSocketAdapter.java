@@ -35,6 +35,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter implements Obs
         getSession().setIdleTimeout(-1);
         this.xscopeSocket = new XscopeSocket("127.0.0.1", "10101", getRemote());
         logger.info("Socket connected to " + session.getRemoteAddress());
+        Util.sendWebSocketResultResponse(getRemote(), DeviceManager.getInstance().getDevices(), Constants.LIST);
     }
 
     @Override
@@ -164,7 +165,7 @@ public class MotorTuningWebSocketAdapter extends WebSocketAdapter implements Obs
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof DeviceManager && getRemote() != null) {
-            Util.sendWebSocketResultResponse(getRemote(), ((DeviceManager) o).getDevices(), null);
+            Util.sendWebSocketResultResponse(getRemote(), ((DeviceManager) o).getDevices(), Constants.LIST);
         }
     }
 }

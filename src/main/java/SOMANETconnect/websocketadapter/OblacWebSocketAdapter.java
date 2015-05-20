@@ -32,6 +32,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter implements Observer 
         getSession().setIdleTimeout(-1);
         logger.info("Socket connected to " + session.getRemoteAddress());
         SomanetConnectSystemTray.getInstance().oblacConnected(true);
+        Util.sendWebSocketResultResponse(getRemote(), DeviceManager.getInstance().getDevices(), Constants.LIST);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class OblacWebSocketAdapter extends WebSocketAdapter implements Observer 
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof DeviceManager && getRemote() != null) {
-            Util.sendWebSocketResultResponse(getRemote(), ((DeviceManager) o).getDevices(), null);
+            Util.sendWebSocketResultResponse(getRemote(), ((DeviceManager) o).getDevices(), Constants.LIST);
         }
     }
 }
