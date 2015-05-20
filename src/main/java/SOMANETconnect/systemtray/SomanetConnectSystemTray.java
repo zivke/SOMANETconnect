@@ -145,9 +145,6 @@ public class SomanetConnectSystemTray implements Observer {
                     popupMenu.setLocation(e.getPoint());
                     popupMenu.setInvoker(popupMenu);
                     popupMenu.setVisible(true);
-
-                    // Run the listing process in a separate thread, so that the context menu doesn't lag
-//                    (new Thread(new Worker())).start();
                 }
             }
         });
