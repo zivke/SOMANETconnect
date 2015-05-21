@@ -154,10 +154,6 @@ public class DeviceManager extends Observable {
         return deviceList.getDevices();
     }
 
-    public DeviceList getDeviceList() {
-        return deviceList;
-    }
-
     public void setDeviceList(DeviceList deviceList) {
         this.deviceList = deviceList;
         setChanged();
