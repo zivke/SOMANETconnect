@@ -9,11 +9,11 @@ import java.util.*;
 
 // Singleton
 public class DeviceManager extends Observable {
-    private static DeviceManager deviceManager = new DeviceManager();
-
     private static final Logger logger = Logger.getLogger(DeviceManager.class.getName());
 
     private static final int XMOS_VENDOR_ID = 0x20b1;
+
+    private static DeviceManager deviceManager = new DeviceManager();
 
     /**
      * The hotplug callback handler
