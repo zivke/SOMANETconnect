@@ -1,5 +1,6 @@
 package SOMANETconnect;
 
+import SOMANETconnect.device.DeviceManager;
 import SOMANETconnect.miscellaneous.SomanetConnectServerFactory;
 import SOMANETconnect.systemprocess.SystemProcessLive;
 import SOMANETconnect.systemtray.SomanetConnectSystemTray;
@@ -49,6 +50,8 @@ public class SomanetConnect {
                     }
                 }
             }
+        } finally {
+            deviceManager.close();
         }
     }
 }

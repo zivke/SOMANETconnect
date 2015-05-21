@@ -1,7 +1,7 @@
 package SOMANETconnect.websocketadapter;
 
-import SOMANETconnect.DeviceManager;
 import SOMANETconnect.XscopeSocket;
+import SOMANETconnect.device.DeviceManager;
 import SOMANETconnect.miscellaneous.Constants;
 import SOMANETconnect.miscellaneous.Util;
 import SOMANETconnect.systemprocess.SystemProcess;

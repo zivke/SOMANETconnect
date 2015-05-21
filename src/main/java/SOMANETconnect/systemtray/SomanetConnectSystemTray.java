@@ -1,6 +1,6 @@
 package SOMANETconnect.systemtray;
 
-import SOMANETconnect.DeviceManager;
+import SOMANETconnect.device.DeviceManager;
 import SOMANETconnect.miscellaneous.Constants;
 import SOMANETconnect.miscellaneous.Util;
 import SOMANETconnect.systemtray.ui.JPopupMenuEx;

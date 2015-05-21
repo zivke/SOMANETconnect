@@ -1,4 +1,6 @@
-package SOMANETconnect.miscellaneous;
+package SOMANETconnect.device;
+
+import SOMANETconnect.miscellaneous.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

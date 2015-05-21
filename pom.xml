@@ -59,6 +59,9 @@
         <!-- Sun JNA -->
         <jna.version>4.1.0</jna.version>
         <platform.version>3.4.0</platform.version>
+
+        <!-- usb4java -->
+        <usb4java.version>1.2.0</usb4java.version>
     </properties>
 
     <build>
@@ -160,6 +163,13 @@
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
             <version>${jna.version}</version>
+        </dependency>
+
+        <!-- usb4java -->
+        <dependency>
+            <groupId>org.usb4java</groupId>
+            <artifactId>usb4java</artifactId>
+            <version>${usb4java.version}</version>
         </dependency>
     </dependencies>
 </project>
