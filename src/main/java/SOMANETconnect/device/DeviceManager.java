@@ -174,33 +174,6 @@ public class DeviceManager extends Observable {
         notifyObservers();
     }
 
-    private int countXmosDevices() {
-        int count = 0;
-        org.usb4java.DeviceList list = new org.usb4java.DeviceList();
-        int result = LibUsb.getDeviceList(usbContext, list);
-        if (result < 0) {
-            logger.error("Unable to get device list");
-            return -1;
-        }
-
-        try {
-            for (Device device : list) {
-                DeviceDescriptor descriptor = new DeviceDescriptor();
-                result = LibUsb.getDeviceDescriptor(device, descriptor);
-                if (result != LibUsb.SUCCESS) {
-                    logger.error("Unable to read device descriptor");
-                } else {
-                    if (descriptor.idVendor() == XMOS_VENDOR_ID) {
-                        count++;
-                    }
-                }
-            }
-        } finally {
-            LibUsb.freeDeviceList(list, true);
-        }
-        return count;
-    }
-
     public void close() {
         if (callbackHandle != null) {
             // Unregister the hotplug callback and stop the event handling thread
