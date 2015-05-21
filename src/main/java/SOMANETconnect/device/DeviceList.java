@@ -24,6 +24,10 @@ public class DeviceList {
             String tmpOutput = output;
             int marker = tmpOutput.indexOf("Available XMOS Devices");
             marker = tmpOutput.indexOf("  0 ", marker);
+            if (marker == -1) {
+                // There has been a problem with the XMOS tools output and it is safe (?) to return an empty device list
+                return;
+            }
             tmpOutput = tmpOutput.substring(marker).trim();
             String[] lines = tmpOutput.split(System.getProperty("line.separator"));
             for (String line : lines) {
