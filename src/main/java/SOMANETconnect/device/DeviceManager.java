@@ -154,7 +154,7 @@ public class DeviceManager extends Observable {
         return deviceList.getDevices();
     }
 
-    public void setDeviceList(DeviceList deviceList) {
+    private void setDeviceList(DeviceList deviceList) {
         this.deviceList = deviceList;
         setChanged();
         notifyObservers();
