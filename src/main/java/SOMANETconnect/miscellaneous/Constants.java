@@ -56,6 +56,10 @@ public final class Constants {
         }
         String ldLibraryPath = getEnv("LD_LIBRARY_PATH");
         tmpMap.put("LD_LIBRARY_PATH", currentDir + "/lib" + delimiter + ldLibraryPath);
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            String dyldLibraryPath = getEnv("DYLD_LIBRARY_PATH");
+            tmpMap.put("DYLD_LIBRARY_PATH", currentDir + "/lib" + delimiter + dyldLibraryPath);
+        }
         String xccCIncludePath = currentDir + "/target/include" + delimiter + currentDir + "/target/include/gcc";
         tmpMap.put("XCC_C_INCLUDE_PATH", xccCIncludePath);
         String xccXcIncludePath = currentDir + "/target/include/xc" + delimiter + xccCIncludePath;
