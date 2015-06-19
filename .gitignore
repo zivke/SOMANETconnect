@@ -20,3 +20,7 @@ hs_err_pid*
 # Maven
 log/
 target/
+
+# OS X
+.DS_Store
+
