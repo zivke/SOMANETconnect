@@ -118,7 +118,14 @@ public class SomanetConnectSystemTray implements Observer {
         JMenuItem aboutItem = new JMenuItem("About SOMANETconnect");
         aboutItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Synapticon SOMANETconnect v1.0", "About", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane jOptionPane = new JOptionPane();
+                JDialog dialog = jOptionPane.createDialog("About");
+                jOptionPane.setMessage("Synapticon SOMANETconnect v1.0");
+                jOptionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+                dialog.setSize(400, 150);
+                dialog.setAlwaysOnTop(true);
+                dialog.setModal(false);
+                dialog.setVisible(true);
             }
         });
         popupMenu.add(aboutItem);
