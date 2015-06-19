@@ -122,6 +122,36 @@ public final class Util {
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            Path launchAgentsDir = Paths.get(System.getenv("HOME"), "Library", "LaunchAgents");
+            if (!Files.exists(launchAgentsDir)) {
+                Files.createDirectories(launchAgentsDir);
+            }
+            Path plistFile = Paths.get(launchAgentsDir.toString(), "com.synapticon.somanetconnect.plist");
+            if (startOnBoot) {
+                String applicationPath = System.getProperty("user.dir") + "/../MacOS/SOMANETconnect";
+                String plistFileContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n" +
+                        "<plist version=\"1.0\">\n" +
+                        "<dict>\n" +
+                        "    <key>Label</key>\n" +
+                        "    <string>com.synapticon.somanetconnect</string>\n" +
+                        "    <key>ProgramArguments</key>\n" +
+                        "    <array>\n" +
+                        "        <string>" + applicationPath + "</string>\n" +
+                        "    </array>\n" +
+                        "    <key>ProcessType</key>\n" +
+                        "    <string>Background</string>\n" +
+                        "    <key>RunAtLoad</key>\n" +
+                        "    <true/>\n" +
+                        "    <key>KeepAlive</key>\n" +
+                        "    <false/>\n" +
+                        "</dict>\n" +
+                        "</plist>";
+                Files.write(plistFile, plistFileContent.getBytes());
+            } else {
+                Files.deleteIfExists(plistFile);
+            }
         }
     }
 
@@ -137,6 +167,10 @@ public final class Util {
                 return false;
             }
             return true;
+        }  else if (SystemUtils.IS_OS_MAC_OSX) {
+            Path plistFile =
+                    Paths.get(System.getenv("HOME"), "Library", "LaunchAgents", "com.synapticon.somanetconnect.plist");
+            return Files.exists(plistFile);
         }
         return false;
     }
