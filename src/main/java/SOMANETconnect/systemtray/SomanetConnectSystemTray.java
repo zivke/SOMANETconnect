@@ -328,7 +328,7 @@ public class SomanetConnectSystemTray implements Observer {
     public void update(Observable o, Object arg) {
         if (o instanceof DeviceManager) {
             devices = ((DeviceManager) o).getDevices();
-            (new Thread(new Worker())).start();
+            SwingUtilities.invokeLater(new Worker());
         }
     }
 }
