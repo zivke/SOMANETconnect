@@ -4,7 +4,6 @@ import SOMANETconnect.device.DeviceManager;
 import SOMANETconnect.miscellaneous.SomanetConnectServerFactory;
 import SOMANETconnect.systemprocess.SystemProcessLive;
 import SOMANETconnect.systemtray.SomanetConnectSystemTray;
-import SOMANETconnect.websocketadapter.MotorTuningWebSocketCreator;
 import SOMANETconnect.websocketadapter.OblacWebSocketCreator;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
@@ -27,15 +26,9 @@ public class SomanetConnect {
         deviceManager.addObserver(oblacWebSocketCreator.getOblacWebSocketAdapter());
         Server oblacServer = SomanetConnectServerFactory.createOblacServer(oblacWebSocketCreator);
 
-        MotorTuningWebSocketCreator motorTuningWebSocketCreator = new MotorTuningWebSocketCreator();
-        deviceManager.addObserver(motorTuningWebSocketCreator.getMotorTuningWebSocketAdapter());
-        Server motorTuningServer = SomanetConnectServerFactory.createMotorTuningServer(motorTuningWebSocketCreator);
-
         try {
             oblacServer.start();
-            motorTuningServer.start();
             oblacServer.join();
-            motorTuningServer.join();
         } catch (Throwable t) {
             logger.error(t.getMessage());
             if (t instanceof MultiException) {
